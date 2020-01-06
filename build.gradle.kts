@@ -1,3 +1,7 @@
+require(hasProperty("project-group"))
+require(hasProperty("project-version"))
+require(hasProperty("project-name"))
+require(hasProperty("jvm-target"))
 
 group = gradleProperty("project-group")
 version = gradleProperty("project-version")
@@ -20,9 +24,18 @@ tasks {
 	compileKotlin {
 		kotlinOptions.jvmTarget = gradleProperty("jvm-target")
 		kotlinOptions.freeCompilerArgs = listOf("-Xsjr305=strict")
+		incremental = true
 	}
 	compileTestKotlin {
 		kotlinOptions.jvmTarget = gradleProperty("jvm-target")
+		kotlinOptions.freeCompilerArgs = listOf("-Xsjr305=strict")
+		incremental = true
+	}
+	compileJava {
+		options.isIncremental = true
+		options.isFork = true
+		sourceCompatibility = gradleProperty("jvm-target")
+		targetCompatibility = gradleProperty("jvm-target")
 	}
 }
 
