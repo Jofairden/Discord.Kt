@@ -18,17 +18,20 @@ repositories {
 
 dependencies {
 	implementation(kotlin("stdlib-jdk8"))
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.3")
+	compile("io.github.microutils:kotlin-logging:1.7.7")
+	compile("org.slf4j:slf4j-simple:1.7.26")
 }
 
 tasks {
 	compileKotlin {
 		kotlinOptions.jvmTarget = gradleProperty("jvm-target")
-		kotlinOptions.freeCompilerArgs = listOf("-Xsjr305=strict")
+		kotlinOptions.freeCompilerArgs = listOf("-Xjsr305=strict")
 		incremental = true
 	}
 	compileTestKotlin {
 		kotlinOptions.jvmTarget = gradleProperty("jvm-target")
-		kotlinOptions.freeCompilerArgs = listOf("-Xsjr305=strict")
+		kotlinOptions.freeCompilerArgs = listOf("-Xjsr305=strict")
 		incremental = true
 	}
 	compileJava {
