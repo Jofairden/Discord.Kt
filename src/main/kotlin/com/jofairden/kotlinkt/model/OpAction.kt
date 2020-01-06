@@ -1,6 +1,6 @@
 package com.jofairden.kotlinkt.model
 
-enum class ClientAction {
+enum class OpAction {
     Receive,
     Send,
     SendAndReceive

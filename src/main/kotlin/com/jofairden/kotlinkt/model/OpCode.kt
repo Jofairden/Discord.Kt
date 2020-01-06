@@ -1,12 +1,12 @@
 package com.jofairden.kotlinkt.model
 
-import com.jofairden.kotlinkt.model.ClientAction.Receive
-import com.jofairden.kotlinkt.model.ClientAction.Send
-import com.jofairden.kotlinkt.model.ClientAction.SendAndReceive
+import com.jofairden.kotlinkt.model.OpAction.Receive
+import com.jofairden.kotlinkt.model.OpAction.Send
+import com.jofairden.kotlinkt.model.OpAction.SendAndReceive
 
 sealed class OpCode(
     val code: Int,
-    val action: ClientAction
+    val action: OpAction
 ) {
     object Dispatch : OpCode(0, Receive)
     object Heartbeat : OpCode(1, SendAndReceive)
@@ -19,4 +19,8 @@ sealed class OpCode(
     object InvalidSession : OpCode(9, Receive)
     object Hello : OpCode(10, Receive)
     object HeartbeatACK : OpCode(11, Receive)
+
+    companion object {
+        fun find(op: Int) = OpCode::class.sealedSubclasses.first { it.objectInstance?.code == op }.objectInstance
+    }
 }
