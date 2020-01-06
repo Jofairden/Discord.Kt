@@ -1,0 +1,17 @@
+root = true
+
+[*.kt]
+indent_size = 4
+insert_final_newline = true
+max_line_length = off
+charset = utf-8
+trim_trailing_whitespace = true
+end_of_line = lf
+# KtLint ignore rules
+disabled_rules=no-wildcard-imports,experimental:annotation
+
+[gradlew.bat]
+end_of_line = crlf
+
+[*.md]
+trim_trailing_whitespace = true
