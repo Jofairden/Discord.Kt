@@ -1,6 +1,6 @@
 package com.jofairden.kotlinkt.api
 
-import com.jofairden.kotlinkt.model.DiscordClientProperties
+import com.jofairden.kotlinkt.model.GatewayCloseEventCode
 import com.jofairden.kotlinkt.model.OpAction
 import com.jofairden.kotlinkt.model.OpCode
 import com.jofairden.kotlinkt.model.gateway.payload.GatewayPayload
@@ -53,9 +53,12 @@ internal class InternalClient(
             })
     }
 
-    fun connect(properties: DiscordClientProperties) {
-        dispatcher.properties = properties
+    fun connect() {
         logger.info { "Starting websocket ${webSocket.request().url}" }
+    }
+
+    fun disconnect(reason: String? = null) {
+        webSocket.close(GatewayCloseEventCode.UnknownError.code, reason)
     }
 
     fun GatewayPayload.send() {
