@@ -12,20 +12,17 @@ Current lib features:
 # Dev task list
 List of things completed, and things yet to be done.
 (The list may not accurately represent the current state of the lib)
-- [x] Retrofit interfaces
 - [x] Connect with Discord & Send heartbeats
 - [x] Handle connection resumption
 - [x] Message Dispatcher
 - [ ] Event Dispatcher (high prio)
+- [ ] Event hooking (high prio)
 - [ ] Sharding (low prio)
 - [ ] Rate limiting (low prio)
 - [ ] WebSocket failure reporter
 - [ ] Required permission checking (high prio)
-- [ ] Retrofit services for all resources
+- [x] Retrofit services for all resources
 - [ ] Storing resources (cache) (high prio)
-
-# License
-[MIT License](https://github.com/Jofairden/Discord.Kt/blob/master/LICENSE)
 
 # Libraries
 The listed libraries may not be final
@@ -40,3 +37,22 @@ The listed libraries may not be final
 # How to get in touch
 
 If you would like to receive help with the lib or help develop the lib, it's best to join our [Discord server](https://discord.gg/RkBVCmy). Discord is similar to IRC chats. To use Discord you will need to register a new account on [their website](https://discordapp.com/).
+
+# License
+[Apache2.0 License](https://github.com/Jofairden/Discord.Kt/blob/master/LICENSE)
+```
+Copyright 2020 Daniël Zondervan
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```
+
