@@ -1,4 +1,4 @@
-package com.jofairden.kotlinkt.retrofit
+package com.jofairden.kotlinkt.services
 
 import com.fasterxml.jackson.databind.JsonNode
 import retrofit2.http.GET

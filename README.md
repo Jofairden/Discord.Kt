@@ -21,6 +21,8 @@ List of things completed, and things yet to be done.
 - [ ] Rate limiting (low prio)
 - [ ] WebSocket failure reporter
 - [ ] Required permission checking (high prio)
+- [ ] Retrofit services for all resources
+- [ ] Storing resources (cache) (high prio)
 
 # License
 [MIT License](https://github.com/Jofairden/Discord.Kt/blob/master/LICENSE)

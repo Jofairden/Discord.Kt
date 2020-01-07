@@ -4,7 +4,7 @@ import com.jofairden.kotlinkt.model.gateway.GatewayCloseEventCode
 import com.jofairden.kotlinkt.model.gateway.OpAction
 import com.jofairden.kotlinkt.model.gateway.OpCode
 import com.jofairden.kotlinkt.model.gateway.payload.GatewayPayload
-import com.jofairden.kotlinkt.util.RetrofitUtil
+import com.jofairden.kotlinkt.util.ServiceUtil
 import com.jofairden.kotlinkt.util.send
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -42,7 +42,7 @@ internal class InternalClient(
     }
 
     private fun createWebsocket() = runBlocking(Dispatchers.IO) {
-        val url = RetrofitUtil.gatewayService.getGateway()["url"].asText()
+        val url = ServiceUtil.gatewayService.getGateway()["url"].asText()
         val req = Request.Builder().url("$url?v=6&encoding=json").build()
         webSocket = client.newWebSocket(req, discordWsListener)
     }

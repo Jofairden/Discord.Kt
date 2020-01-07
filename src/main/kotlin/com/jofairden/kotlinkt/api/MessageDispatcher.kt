@@ -11,7 +11,7 @@ internal class MessageDispatcher(
     private val logger = KotlinLogging.logger { }
     private val guardian = discordClient.GatewayGuardian(eventDispatcher)
 
-    fun dispatch(text: String) {
+    suspend fun dispatch(text: String) {
         val node = JsonUtil.Mapper.readTree(text)
         val opCode = OpCode.find(node["op"].asInt())
 

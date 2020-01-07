@@ -10,16 +10,15 @@ internal class EventDispatcher(
     private val discordClient: DiscordClient
 ) {
     private val logger = KotlinLogging.logger {}
-    private val events = discordClient.Events()
 
-    fun dispatch(event: GatewayEvent, node: JsonNode) {
+    suspend fun dispatch(event: GatewayEvent, node: JsonNode) {
         when (event) {
             GatewayEvent.Hello -> {
             }
             GatewayEvent.Ready -> {
                 discordClient.sessionId = node["session_id"].asInt()
                 val ctx = JsonUtil.Mapper.treeToValue(node, ReadyEventContext::class.java)
-                events.ready(ctx)
+                discordClient.ready(ctx)
             }
             GatewayEvent.Resumed -> {
             }

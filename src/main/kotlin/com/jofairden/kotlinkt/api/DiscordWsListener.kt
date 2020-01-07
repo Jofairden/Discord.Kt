@@ -1,5 +1,7 @@
 package com.jofairden.kotlinkt.api
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 import okhttp3.Response
 import okhttp3.WebSocket
@@ -28,7 +30,7 @@ internal class DiscordWsListener(
         logger.trace { "Websocket opened" }
     }
 
-    override fun onMessage(webSocket: WebSocket, text: String) {
+    override fun onMessage(webSocket: WebSocket, text: String) = runBlocking(Dispatchers.Default) {
         dispatcher.dispatch(text)
     }
 }

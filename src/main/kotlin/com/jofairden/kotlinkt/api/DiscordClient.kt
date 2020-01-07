@@ -18,6 +18,15 @@ import mu.KotlinLogging
 
 class DiscordClient {
 
+    companion object Builder {
+        fun build(block: DiscordClient.() -> Unit) = DiscordClient().also(block)
+        fun buildAndRun(token: String, block: DiscordClient.() -> Unit) = build(block).also {
+            it.connect(
+                DiscordClientProperties(token)
+            )
+        }
+    }
+
     private val logger = KotlinLogging.logger { }
     private val internalClient = InternalClient(this)
     internal lateinit var properties: DiscordClientProperties
@@ -29,17 +38,15 @@ class DiscordClient {
         internalClient.connect()
     }
 
-    private val readyEventHandlers = arrayListOf<(ctx: ReadyEventContext) -> Unit>()
+    //MutableList<suspend (ctx : T) -> Unit> where T : EventContext
+    private val readyEventHandlers: MutableList<ReadyEventBlock> = ArrayList()
 
-    fun ready(handler: (ctx: ReadyEventContext) -> Unit) {
-        readyEventHandlers.add(handler)
+    fun onReady(block: ReadyEventBlock) {
+        readyEventHandlers += block
     }
 
-    internal inner class Events {
-        fun ready(ctx: ReadyEventContext) {
-            logger.info { "READY Event" }
-            readyEventHandlers.forEach { it(ctx) }
-        }
+    suspend fun ready(ctx: ReadyEventContext) {
+        readyEventHandlers.forEach { it(ctx) }
     }
 
     internal inner class GatewayGuardian(
@@ -51,7 +58,7 @@ class DiscordClient {
         /**
          * Receive an event dispatch
          */
-        fun dispatch(node: JsonNode) {
+        suspend fun dispatch(node: JsonNode) {
             sequenceNumber = node["s"].asInt()
             when (node["t"].asText()) {
                 "READY" -> {

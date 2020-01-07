@@ -3,6 +3,8 @@ package com.jofairden.kotlinkt.model.context.event
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.JsonNode
+import com.jofairden.kotlinkt.model.discord.guild.UnavailableGuild
+import com.jofairden.kotlinkt.model.discord.user.DiscordUser
 
 class ReadyEventContext(
     @JsonProperty("v")
@@ -12,7 +14,7 @@ class ReadyEventContext(
     val botUserSettings: JsonNode,
 
     @JsonProperty("user")
-    val botUser: JsonNode,
+    val botUser: DiscordUser,
 
     @JsonProperty("session_id")
     val sessionId: String,
@@ -27,7 +29,7 @@ class ReadyEventContext(
     val presences: Array<JsonNode>,
 
     @JsonProperty("guilds")
-    val guilds: Array<JsonNode>,
+    val guilds: Array<UnavailableGuild>,
 
     @JsonProperty("application")
     val application: JsonNode,
