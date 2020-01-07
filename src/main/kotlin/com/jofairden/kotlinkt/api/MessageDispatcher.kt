@@ -5,10 +5,11 @@ import com.jofairden.kotlinkt.util.JsonUtil
 import mu.KotlinLogging
 
 internal class MessageDispatcher(
-    discordClient: DiscordClient
+    discordClient: DiscordClient,
+    eventDispatcher: EventDispatcher
 ) {
     private val logger = KotlinLogging.logger { }
-    private val guardian = discordClient.GatewayGuardian()
+    private val guardian = discordClient.GatewayGuardian(eventDispatcher)
 
     fun dispatch(text: String) {
         val node = JsonUtil.Mapper.readTree(text)
@@ -28,10 +29,7 @@ internal class MessageDispatcher(
             OpCode.Resume -> opCode.warn()
             OpCode.Reconnect -> guardian.reconnect()
             OpCode.RequestGuildMembers -> opCode.warn()
-            OpCode.InvalidSession -> {
-                if (node["d"].asBoolean()) guardian.reconnect()
-                else guardian.disconnect()
-            }
+            OpCode.InvalidSession -> guardian.invalidSession(node)
             OpCode.Hello -> guardian.hello(node)
             OpCode.HeartbeatACK -> guardian.heartbeatAck()
         }

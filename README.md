@@ -20,6 +20,7 @@ List of things completed, and things yet to be done.
 - [ ] Sharding (low prio)
 - [ ] Rate limiting (low prio)
 - [ ] WebSocket failure reporter
+- [ ] Required permission checking (high prio)
 
 # License
 [MIT License](https://github.com/Jofairden/Discord.Kt/blob/master/LICENSE)

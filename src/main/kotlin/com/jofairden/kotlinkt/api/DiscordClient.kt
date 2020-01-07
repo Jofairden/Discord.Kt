@@ -2,12 +2,13 @@ package com.jofairden.kotlinkt.api
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.jofairden.kotlinkt.model.api.DiscordClientProperties
+import com.jofairden.kotlinkt.model.context.event.ReadyEventContext
+import com.jofairden.kotlinkt.model.gateway.GatewayEvent
 import com.jofairden.kotlinkt.model.gateway.OpCode
 import com.jofairden.kotlinkt.model.gateway.payload.GatewayPayload
 import com.jofairden.kotlinkt.model.gateway.payload.HeartbeatPayload
 import com.jofairden.kotlinkt.model.gateway.payload.IdentifyPayload
 import com.jofairden.kotlinkt.model.gateway.payload.ResumePayload
-import com.jofairden.kotlinkt.util.JsonUtil
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -20,27 +21,32 @@ class DiscordClient {
     private val logger = KotlinLogging.logger { }
     private val internalClient = InternalClient(this)
     internal lateinit var properties: DiscordClientProperties
+    internal var sessionId: Int? = null
+    internal var sequenceNumber: Int? = null
 
     fun connect(properties: DiscordClientProperties) {
         this.properties = properties
         internalClient.connect()
     }
 
-    internal inner class Events {
-        internal var sessionId: Int? = null
+    private val readyEventHandlers = arrayListOf<(ctx: ReadyEventContext) -> Unit>()
 
-        fun ready(node: JsonNode) {
-            logger.info { JsonUtil.Mapper.writeValueAsString(node) }
-            sessionId = node["session_id"].asInt()
+    fun ready(handler: (ctx: ReadyEventContext) -> Unit) {
+        readyEventHandlers.add(handler)
+    }
+
+    internal inner class Events {
+        fun ready(ctx: ReadyEventContext) {
+            logger.info { "READY Event" }
+            readyEventHandlers.forEach { it(ctx) }
         }
     }
 
-    internal inner class GatewayGuardian {
-
+    internal inner class GatewayGuardian(
+        private val eventDispatcher: EventDispatcher
+    ) {
         private var isReconnecting = false
-        private var sequenceNumber: Int? = null
         private var hbJob: Job? = null
-        private val events = Events()
 
         /**
          * Receive an event dispatch
@@ -52,14 +58,14 @@ class DiscordClient {
                     if (isReconnecting && sequenceNumber != null) {
                         resume()
                     }
-                    events.ready(node["d"])
+                    eventDispatcher.dispatch(GatewayEvent.Ready, node["d"])
                 }
             }
         }
 
         // TODO track last hb and ack (determine zombied connection)
         fun heartbeatAck() {
-            logger.info { "Heartbeat Ack" }
+            logger.info { "Heartbeat Acknowledged" }
         }
 
         /**
@@ -107,15 +113,23 @@ class DiscordClient {
             with(internalClient) {
                 GatewayPayload(
                     OpCode.Resume.code,
-                    ResumePayload(properties.token, events.sessionId.toString(), sequenceNumber!!).toJsonNode()
+                    ResumePayload(properties.token, sessionId.toString(), sequenceNumber!!).toJsonNode()
                 ).send()
             }
         }
 
         /**
+         * Attempts to handle an invalid sessions
+         */
+        fun invalidSession(node: JsonNode) {
+            if (node["d"].asBoolean()) reconnect()
+            else disconnect()
+        }
+
+        /**
          * Disconnect the current client
          */
-        fun disconnect() {
+        private fun disconnect() {
             internalClient.disconnect()
         }
 

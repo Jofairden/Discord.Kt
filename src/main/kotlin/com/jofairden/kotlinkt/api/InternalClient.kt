@@ -17,8 +17,9 @@ internal class InternalClient(
     discordClient: DiscordClient
 ) {
     private val logger = KotlinLogging.logger { }
-    private val dispatcher = MessageDispatcher(discordClient)
-    private val discordWsListener = DiscordWsListener(dispatcher)
+    private val eventDispatcher = EventDispatcher(discordClient)
+    private val messageDispatcher = MessageDispatcher(discordClient, eventDispatcher)
+    private val discordWsListener = DiscordWsListener(messageDispatcher)
 
     internal val client = OkHttpClient()
     internal lateinit var webSocket: WebSocket
