@@ -5,6 +5,9 @@ import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Path
 
+/**
+ * Source: https://discordapp.com/developers/docs/resources/invite
+ */
 interface InviteService {
     @GET("invites/{invite.code}")
     suspend fun getInvite(
