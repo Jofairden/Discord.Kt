@@ -1,4 +1,4 @@
-package com.jofairden.kotlinkt.model
+package com.jofairden.kotlinkt.model.gateway
 
 sealed class GatewayCloseEventCode(
     val code: Int

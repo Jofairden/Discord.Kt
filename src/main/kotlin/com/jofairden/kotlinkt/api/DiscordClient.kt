@@ -1,8 +1,8 @@
 package com.jofairden.kotlinkt.api
 
 import com.fasterxml.jackson.databind.JsonNode
-import com.jofairden.kotlinkt.model.DiscordClientProperties
-import com.jofairden.kotlinkt.model.OpCode
+import com.jofairden.kotlinkt.model.api.DiscordClientProperties
+import com.jofairden.kotlinkt.model.gateway.OpCode
 import com.jofairden.kotlinkt.model.gateway.payload.GatewayPayload
 import com.jofairden.kotlinkt.model.gateway.payload.HeartbeatPayload
 import com.jofairden.kotlinkt.model.gateway.payload.IdentifyPayload
@@ -42,6 +42,9 @@ class DiscordClient {
         private var hbJob: Job? = null
         private val events = Events()
 
+        /**
+         * Receive an event dispatch
+         */
         fun dispatch(node: JsonNode) {
             sequenceNumber = node["s"].asInt()
             when (node["t"].asText()) {
@@ -59,6 +62,9 @@ class DiscordClient {
             logger.info { "Heartbeat Ack" }
         }
 
+        /**
+         * Attempt to send a Heartbeat OpCode with a payload consisting of the last known sequence number
+         */
         fun heartbeat() {
             with(internalClient) {
                 GatewayPayload(
@@ -70,6 +76,8 @@ class DiscordClient {
 
         /**
          * When we receive the hello dispatch we should start sending heartbeats and an identify payload
+         * The HELLO dispatch contains an interval at which we should send heartbeats
+         * The basic Identify payload consists of the bot token
          */
         fun hello(node: JsonNode) {
             val interval = node["d"]["heartbeat_interval"].asInt()
@@ -91,6 +99,10 @@ class DiscordClient {
             }
         }
 
+        /**
+         * Attempt to resume the connection
+         * Consists of sending the Resume OpCode with a payload consisting of the bot token, sessionId and sequence number
+         */
         private fun resume() {
             with(internalClient) {
                 GatewayPayload(
@@ -100,8 +112,20 @@ class DiscordClient {
             }
         }
 
-        fun reconnect() {
+        /**
+         * Disconnect the current client
+         */
+        fun disconnect() {
             internalClient.disconnect()
+        }
+
+        /**
+         * Attempt to reconnect with Discord
+         * Reconnection consists of disconnecting the current client, then connecting as normal
+         * After being reconnected and receiving the READY event, the client will attempt to send a Resume OpCode
+         */
+        fun reconnect() {
+            disconnect()
             isReconnecting = true
             connect(properties)
         }

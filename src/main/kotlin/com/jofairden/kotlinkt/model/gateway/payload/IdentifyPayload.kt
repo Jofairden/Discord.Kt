@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 data class IdentifyPayload(
     val token: String,
     val properties: IdentifyPayloadProps = IdentifyPayloadProps()
-) : WsPayload()
+) : WebsocketPayload()
 
 data class IdentifyPayloadProps(
     @JsonProperty("\$os")
@@ -15,5 +15,3 @@ data class IdentifyPayloadProps(
     @JsonProperty("\$device")
     val device: String = "Diskord.Kt"
 )
-
-

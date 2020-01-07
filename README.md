@@ -12,14 +12,28 @@ Current lib features:
 # Dev task list
 List of things completed, and things yet to be done.
 (The list may not accurately represent the current state of the lib)
+- [x] Retrofit interfaces
 - [x] Connect with Discord & Send heartbeats
-- [ ] Handle connection resumption 
-- [ ] Implement sharding
-- [ ] Hookable (Discord-)events in bot class
+- [x] Handle connection resumption
+- [x] Message Dispatcher
+- [ ] Event Dispatcher (high prio)
+- [ ] Sharding (low prio)
+- [ ] Rate limiting (low prio)
+- [ ] WebSocket failure reporter
 
 # License
 [MIT License](https://github.com/Jofairden/Discord.Kt/blob/master/LICENSE)
 
-## How to get in touch
+# Libraries
+The listed libraries may not be final
 
-If you would like to receive help with the lib or help develop the lib, it's best to join our [Discord server](https://discord.gg/RkBVCmy). Discord is a chat and voice application we've used for over 2 years to communicate with each other. It's similar to IRC chats. To use Discord you will need to register a new account on [their website](https://discordapp.com/).
+| Library       | Version       | License       |
+| ------------- | ------------- | ------------- |
+| OkHttp  | 4.3.0 | Apache 2.0 |
+| Jackson  | 2.10.2| Apache 2.0 |
+| Retrofit | 2.7.1 | Apache 2.0 |
+| Kotlin-Logging | 1.7.7 | Apache 2.0 |
+
+# How to get in touch
+
+If you would like to receive help with the lib or help develop the lib, it's best to join our [Discord server](https://discord.gg/RkBVCmy). Discord is similar to IRC chats. To use Discord you will need to register a new account on [their website](https://discordapp.com/).

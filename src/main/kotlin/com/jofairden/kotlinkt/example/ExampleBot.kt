@@ -1,7 +1,7 @@
 package com.jofairden.kotlinkt.example
 
 import com.jofairden.kotlinkt.api.DiscordClient
-import com.jofairden.kotlinkt.model.DiscordClientProperties
+import com.jofairden.kotlinkt.model.api.DiscordClientProperties
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import java.io.File

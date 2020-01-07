@@ -1,6 +1,6 @@
 package com.jofairden.kotlinkt.api
 
-import com.jofairden.kotlinkt.model.OpCode
+import com.jofairden.kotlinkt.model.gateway.OpCode
 import com.jofairden.kotlinkt.util.JsonUtil
 import mu.KotlinLogging
 
@@ -29,11 +29,8 @@ internal class MessageDispatcher(
             OpCode.Reconnect -> guardian.reconnect()
             OpCode.RequestGuildMembers -> opCode.warn()
             OpCode.InvalidSession -> {
-                if (node["d"].asBoolean()) {
-                    guardian.reconnect()
-                } else {
-                    // TODO Bot should terminate
-                }
+                if (node["d"].asBoolean()) guardian.reconnect()
+                else guardian.disconnect()
             }
             OpCode.Hello -> guardian.hello(node)
             OpCode.HeartbeatACK -> guardian.heartbeatAck()
@@ -41,6 +38,6 @@ internal class MessageDispatcher(
     }
 
     private fun OpCode.warn() {
-        logger.warn { "Should not have received opcode ${this}: it should not be sent by Discord" }
+        logger.warn { "Should not have received opcode $this: it should not be sent by Discord" }
     }
 }

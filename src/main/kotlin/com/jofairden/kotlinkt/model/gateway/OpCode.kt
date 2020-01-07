@@ -1,8 +1,8 @@
-package com.jofairden.kotlinkt.model
+package com.jofairden.kotlinkt.model.gateway
 
-import com.jofairden.kotlinkt.model.OpAction.Receive
-import com.jofairden.kotlinkt.model.OpAction.Send
-import com.jofairden.kotlinkt.model.OpAction.SendAndReceive
+import com.jofairden.kotlinkt.model.gateway.OpAction.Receive
+import com.jofairden.kotlinkt.model.gateway.OpAction.Send
+import com.jofairden.kotlinkt.model.gateway.OpAction.SendAndReceive
 
 sealed class OpCode(
     val code: Int,
