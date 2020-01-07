@@ -4,6 +4,7 @@ import com.jofairden.kotlinkt.services.AuditLogService
 import com.jofairden.kotlinkt.services.ChannelService
 import com.jofairden.kotlinkt.services.EmojiService
 import com.jofairden.kotlinkt.services.GatewayService
+import com.jofairden.kotlinkt.services.GuildService
 import com.jofairden.kotlinkt.services.InviteService
 import com.jofairden.kotlinkt.services.UserService
 import retrofit2.Retrofit
@@ -24,4 +25,5 @@ internal object ServiceUtil {
     val auditLogService = discordApi.create(AuditLogService::class.java)
     val inviteService = discordApi.create(InviteService::class.java)
     val emojiService = discordApi.create(EmojiService::class.java)
+    val guildService = discordApi.create(GuildService::class.java)
 }
