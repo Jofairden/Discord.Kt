@@ -41,7 +41,12 @@ sealed class GatewayEvent(
     object WebhooksUpdate : GatewayEvent("WEBHOOKS_UPDATE")
 
     companion object {
-        fun find(name: String) =
-            GatewayEvent::class.sealedSubclasses.first { it.objectInstance?.name == name }.objectInstance
+        fun find(name: String): GatewayEvent? {
+            return try {
+                GatewayEvent::class.sealedSubclasses.first { it.objectInstance?.name == name }.objectInstance
+            } catch (_: Exception) {
+                null
+            }
+        }
     }
 }

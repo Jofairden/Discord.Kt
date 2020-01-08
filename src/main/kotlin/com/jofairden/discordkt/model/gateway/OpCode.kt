@@ -21,6 +21,12 @@ sealed class OpCode(
     object HeartbeatACK : OpCode(11, Receive)
 
     companion object {
-        fun find(op: Int) = OpCode::class.sealedSubclasses.first { it.objectInstance?.code == op }.objectInstance
+        fun find(op: Int): OpCode? {
+            return try {
+                OpCode::class.sealedSubclasses.first { it.objectInstance?.code == op }.objectInstance
+            } catch (_: Exception) {
+                null
+            }
+        }
     }
 }

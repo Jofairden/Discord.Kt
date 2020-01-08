@@ -2,8 +2,11 @@ package com.jofairden.discordkt.model.discord.guild
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.JsonNode
+import com.jofairden.discordkt.model.discord.emoji.GuildEmoji
+import com.jofairden.discordkt.model.discord.role.GuildRole
+import com.jofairden.discordkt.model.discord.user.DiscordUserPresence
 
-class Guild(
+data class Guild(
 
     @JsonProperty("id")
     val id: Long,
@@ -42,25 +45,25 @@ class Guild(
     val embedChannelId: Long?,
 
     @JsonProperty("verification_level")
-    val verificationLevel: Int,
+    val verificationLevel: GuildVerificationLevel,
 
     @JsonProperty("default_message_notifications")
-    val defaultMessageNotifications: Int,
+    val defaultMessageNotifications: MessageNotificationLevel,
 
     @JsonProperty("explicit_content_filter")
-    val explicitContentFilter: Int,
+    val explicitContentFilter: ExplicitContentFilterLevel,
 
     @JsonProperty("roles")
-    val roles: Array<JsonNode>, // Role
+    val roles: Array<GuildRole>, // Role
 
     @JsonProperty("emojis")
-    val emojis: Array<JsonNode>, // Emoji
+    val emojis: Array<GuildEmoji>, // Emoji
 
     @JsonProperty("features")
-    val features: Array<JsonNode>, // Feature
+    val features: Array<GuildFeature>, // Feature
 
     @JsonProperty("mfa_level")
-    val mfaLevel: Int,
+    val mfaLevel: MfaLevel,
 
     @JsonProperty("application_id")
     val applicationId: Long?,
@@ -91,13 +94,13 @@ class Guild(
     val voiceStates: Array<JsonNode>?,
 
     @JsonProperty("members")
-    val members: Array<JsonNode>?, // user
+    val members: Array<GuildUser>?, // user
 
     @JsonProperty("channels")
     val channels: Array<JsonNode>?, // Channel
 
     @JsonProperty("presences")
-    val presences: Array<JsonNode>?, // Partial presence update
+    val presences: Array<DiscordUserPresence>?, // Partial presence update
 
     ///
     // GUILD_CREATE END
@@ -119,7 +122,7 @@ class Guild(
     val bannerHash: String?,
 
     @JsonProperty("premium_tier")
-    val premiumTier: Int,
+    val premiumTier: GuildPremiumTier,
 
     @JsonProperty("premium_subscription_count")
     val boostingCount: Int?,
