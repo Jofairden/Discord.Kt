@@ -15,14 +15,16 @@ List of things completed, and things yet to be done.
 - [x] Connect with Discord & Send heartbeats
 - [x] Handle connection resumption
 - [x] Message Dispatcher
-- [ ] Event Dispatcher (high prio)
+- [x] Event Dispatcher (high prio)
 - [ ] Event hooking (high prio)
 - [ ] Sharding (low prio)
 - [ ] Rate limiting (low prio)
-- [ ] WebSocket failure reporter
+- [x] WebSocket failure reporter
 - [ ] Required permission checking (high prio)
 - [x] Retrofit services for all resources
 - [ ] Storing resources (cache) (high prio)
+- [ ] Model classes for Guild, User, Role and all other associated resources
+- [ ] Command module registration
 
 # Libraries
 The listed libraries may not be final
@@ -33,6 +35,7 @@ The listed libraries may not be final
 | Jackson  | 2.10.2| Apache 2.0 |
 | Retrofit | 2.7.1 | Apache 2.0 |
 | Kotlin-Logging | 1.7.7 | Apache 2.0 |
+| Caffeine | 2.8.0 | Apache 2.0 |
 
 # How to get in touch
 

@@ -1,6 +1,7 @@
 package com.jofairden.discordkt.api
 
 import com.fasterxml.jackson.databind.JsonNode
+import com.jofairden.discordkt.api.cache.DataCache
 import com.jofairden.discordkt.model.api.DiscordClientProperties
 import com.jofairden.discordkt.model.context.event.ReadyEventContext
 import com.jofairden.discordkt.model.gateway.GatewayEvent
@@ -29,6 +30,7 @@ class DiscordClient {
 
     private val logger = KotlinLogging.logger { }
     private val internalClient = InternalClient(this)
+    private val dataCache = DataCache()
     internal lateinit var properties: DiscordClientProperties
     internal lateinit var serviceProvider: ApiServiceProvider
     internal var sessionId: Int? = null
@@ -47,6 +49,10 @@ class DiscordClient {
     }
 
     suspend fun ready(ctx: ReadyEventContext) {
+        ctx.guilds.forEach {
+            val id = it.id.toLong()
+            dataCache.guilds.put(id, serviceProvider.guildService.getGuild(id))
+        }
         readyEventHandlers.forEach { it(ctx) }
     }
 

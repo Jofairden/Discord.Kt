@@ -35,6 +35,7 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-jackson:${gradleProperty("retrofit-version")}")
     implementation("io.github.microutils:kotlin-logging:${gradleProperty("kotlin-logging-version")}")
     implementation("org.slf4j:slf4j-simple:${gradleProperty("sl4j-simple-version")}")
+    implementation("com.github.ben-manes.caffeine:caffeine:${gradleProperty("caffeine-version")}")
 }
 
 tasks {
