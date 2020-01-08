@@ -9,13 +9,13 @@ import retrofit2.http.Path
  * Source: https://discordapp.com/developers/docs/resources/invite
  */
 interface InviteService {
-    @GET("invites/{invite.code}")
+    @GET("invites/{invite-code}")
     suspend fun getInvite(
-        @Path("invite.code") guildId: Int
+        @Path("invite-code") guildId: Long
     ): JsonNode // Invite
 
-    @DELETE("invites/{invite.code}")
+    @DELETE("invites/{invite-code}")
     suspend fun deleteInvite(
-        @Path("invite.code") guildId: Int
+        @Path("invite-code") guildId: Long
     ): JsonNode
 }

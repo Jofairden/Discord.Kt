@@ -14,9 +14,9 @@ interface UserService {
     @GET("users/@me")
     suspend fun getBotUser()
 
-    @GET("users/{user.id}")
+    @GET("users/{user-id}")
     suspend fun getUser(
-        @Path("user.id") userId: Int
+        @Path("user-id") userId: Long
     ): JsonNode // User
 
     @PATCH("users/@me")
@@ -25,9 +25,9 @@ interface UserService {
     @GET("users/@me/guilds")
     suspend fun getBotUserGuilds(): ArrayList<JsonNode> // PartialGuild
 
-    @DELETE("users/@me/guilds/{guild.id}")
+    @DELETE("users/@me/guilds/{guild-id}")
     suspend fun leaveGuild(
-        @Path("guild.id") guildId: Int
+        @Path("guild-id") guildId: Long
     ): JsonNode
 
     @POST("users/@me/channels")

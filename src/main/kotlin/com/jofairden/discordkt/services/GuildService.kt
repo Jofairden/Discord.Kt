@@ -15,7 +15,7 @@ import retrofit2.http.Path
 interface GuildService {
 
     @POST("guilds")
-    suspend fun createGuild(): JsonNode // Guild
+    suspend fun createGuild(): Guild // Guild
 
     @GET("guilds/{guild-id}")
     suspend fun getGuild(
@@ -49,10 +49,10 @@ interface GuildService {
         @Path("guild-id") guildId: Long
     ): JsonNode // 204 Empty
 
-    @GET("guilds/{guild-id}/members/{user.id}")
+    @GET("guilds/{guild-id}/members/{user-id}")
     suspend fun getGuildMember(
         @Path("guild-id") guildId: Long,
-        @Path("user.id") userId: Long
+        @Path("user-id") userId: Long
     ): JsonNode //Guild Member
 
     @GET("guilds/{guild-id}/members")
@@ -60,16 +60,16 @@ interface GuildService {
         @Path("guild-id") guildId: Long
     ): ArrayList<JsonNode> //Guild Member
 
-    @PUT("guilds/{guild-id}/members/{user.id}")
+    @PUT("guilds/{guild-id}/members/{user-id}")
     suspend fun addGuildMember(
         @Path("guild-id") guildId: Long,
-        @Path("user.id") userId: Long
+        @Path("user-id") userId: Long
     ): JsonNode // 201 Created // 204 No content
 
-    @PATCH("guilds/{guild-id}/members/{user.id}")
+    @PATCH("guilds/{guild-id}/members/{user-id}")
     suspend fun modifyGuildMember(
         @Path("guild-id") guildId: Long,
-        @Path("user.id") userId: Long
+        @Path("user-id") userId: Long
     ): JsonNode // 204 No content
 
     @PATCH("guilds/{guild-id}/members/@me/nick")
@@ -78,26 +78,26 @@ interface GuildService {
     ): JsonNode // 200 with nick
 
     //MANAGE_ROLES
-    @PUT("guilds/{guild-id}/members/{user.id}/roles/{role.id}")
+    @PUT("guilds/{guild-id}/members/{user-id}/roles/{role-id}")
     suspend fun addGuildMemberRole(
         @Path("guild-id") guildId: Long,
-        @Path("user.id") userId: Long,
-        @Path("role.id") roleId: Long
+        @Path("user-id") userId: Long,
+        @Path("role-id") roleId: Long
     ): JsonNode // 204 empty
 
     //MANAGE_ROLES
-    @DELETE("guilds/{guild-id}/members/{user.id}/roles/{role.id}")
+    @DELETE("guilds/{guild-id}/members/{user-id}/roles/{role-id}")
     suspend fun removeGuildMemberRole(
         @Path("guild-id") guildId: Long,
-        @Path("user.id") userId: Long,
-        @Path("role.id") roleId: Long
+        @Path("user-id") userId: Long,
+        @Path("role-id") roleId: Long
     ): JsonNode // 204 empty
 
     //KICK_MEMBERS
-    @DELETE("guilds/{guild-id}/members/{user.id}")
+    @DELETE("guilds/{guild-id}/members/{user-id}")
     suspend fun removeGuildMember(
         @Path("guild-id") guildId: Long,
-        @Path("user.id") userId: Long
+        @Path("user-id") userId: Long
     ): JsonNode // 204 empty
 
     //BAN_MEMBERS
@@ -107,24 +107,24 @@ interface GuildService {
     ): ArrayList<JsonNode> // Ban
 
     //BAN_MEMBERS
-    @GET("guilds/{guild-id}/bans/{user.id}")
+    @GET("guilds/{guild-id}/bans/{user-id}")
     suspend fun getGuildBan(
         @Path("guild-id") guildId: Long,
-        @Path("user.id") userId: Long
+        @Path("user-id") userId: Long
     ): JsonNode // Ban//404
 
     //BAN_MEMBERS
-    @PUT("guilds/{guild-id}/bans/{user.id}")
+    @PUT("guilds/{guild-id}/bans/{user-id}")
     suspend fun createGuildBan(
         @Path("guild-id") guildId: Long,
-        @Path("user.id") userId: Long
+        @Path("user-id") userId: Long
     ): JsonNode // Ban//404
 
     //BAN_MEMBERS
-    @DELETE("guilds/{guild-id}/bans/{user.id}")
+    @DELETE("guilds/{guild-id}/bans/{user-id}")
     suspend fun removeGuildBan(
         @Path("guild-id") guildId: Long,
-        @Path("user.id") userId: Long
+        @Path("user-id") userId: Long
     ): JsonNode // Ban//404
 
     @GET("guilds/{guild-id}/roles")
@@ -145,17 +145,17 @@ interface GuildService {
     ): ArrayList<JsonNode> // Role
 
     //MANAGE_ROLES
-    @PATCH("guilds/{guild-id}/roles/{role.id}")
+    @PATCH("guilds/{guild-id}/roles/{role-id}")
     suspend fun modifyGuildRole(
         @Path("guild-id") guildId: Long,
-        @Path("role.id") roleId: Long
+        @Path("role-id") roleId: Long
     ): JsonNode // Role
 
     //MANAGE_ROLES
-    @DELETE("guilds/{guild-id}/roles/{role.id}")
+    @DELETE("guilds/{guild-id}/roles/{role-id}")
     suspend fun deleteGuildRole(
         @Path("guild-id") guildId: Long,
-        @Path("role.id") roleId: Long
+        @Path("role-id") roleId: Long
     ): JsonNode // 204 empty
 
     //KICK_MEMBERS
@@ -194,24 +194,24 @@ interface GuildService {
     ): JsonNode // 204
 
     //MANAGE_GUILD
-    @PATCH("guilds/{guild-id}/integrations/{integration.id}")
+    @PATCH("guilds/{guild-id}/integrations/{integration-id}")
     suspend fun modifyGuildIntegration(
         @Path("guild-id") guildId: Long,
-        @Path("integration.id") integrationId: Long
+        @Path("integration-id") integrationId: Long
     ): JsonNode // 204
 
     //MANAGE_GUILD
-    @DELETE("guilds/{guild-id}/integrations/{integration.id}")
+    @DELETE("guilds/{guild-id}/integrations/{integration-id}")
     suspend fun deleteGuildIntegration(
         @Path("guild-id") guildId: Long,
-        @Path("integration.id") integrationId: Long
+        @Path("integration-id") integrationId: Long
     ): JsonNode // 204
 
     //MANAGE_GUILD
-    @POST("guilds/{guild-id}/integrations/{integration.id}/sync")
+    @POST("guilds/{guild-id}/integrations/{integration-id}/sync")
     suspend fun syncGuildIntegration(
         @Path("guild-id") guildId: Long,
-        @Path("integration.id") integrationId: Long
+        @Path("integration-id") integrationId: Long
     ): JsonNode // 204
 
     //MANAGE_GUILD
