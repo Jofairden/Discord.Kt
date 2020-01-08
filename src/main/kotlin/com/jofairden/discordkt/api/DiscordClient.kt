@@ -18,7 +18,7 @@ import mu.KotlinLogging
 
 class DiscordClient {
 
-    companion object Builder {
+    companion object {
         fun build(block: DiscordClient.() -> Unit) = DiscordClient().also(block)
         fun buildAndRun(token: String, block: DiscordClient.() -> Unit) = build(block).also {
             it.connect(
@@ -30,6 +30,7 @@ class DiscordClient {
     private val logger = KotlinLogging.logger { }
     private val internalClient = InternalClient(this)
     internal lateinit var properties: DiscordClientProperties
+    internal lateinit var serviceProvider: ApiServiceProvider
     internal var sessionId: Int? = null
     internal var sequenceNumber: Int? = null
 
@@ -60,14 +61,11 @@ class DiscordClient {
          */
         suspend fun dispatch(node: JsonNode) {
             sequenceNumber = node["s"].asInt()
-            when (node["t"].asText()) {
-                "READY" -> {
-                    if (isReconnecting && sequenceNumber != null) {
-                        resume()
-                    }
-                    eventDispatcher.dispatch(GatewayEvent.Ready, node["d"])
-                }
+            val event = GatewayEvent.find(node["t"].asText()) ?: return
+            if (event == GatewayEvent.Ready && isReconnecting && sequenceNumber != null) {
+                resume()
             }
+            eventDispatcher.dispatch(event, node["d"])
         }
 
         // TODO track last hb and ack (determine zombied connection)
@@ -79,6 +77,7 @@ class DiscordClient {
          * Attempt to send a Heartbeat OpCode with a payload consisting of the last known sequence number
          */
         fun heartbeat() {
+            logger.info { "Sending heartbeat" }
             with(internalClient) {
                 GatewayPayload(
                     OpCode.Heartbeat.code,
@@ -104,6 +103,7 @@ class DiscordClient {
                 }
             }
 
+            logger.info { "Identiyfing client" }
             with(internalClient) {
                 GatewayPayload(
                     OpCode.Identify.code,
@@ -117,6 +117,7 @@ class DiscordClient {
          * Consists of sending the Resume OpCode with a payload consisting of the bot token, sessionId and sequence number
          */
         private fun resume() {
+            logger.info { "Resuming connection" }
             with(internalClient) {
                 GatewayPayload(
                     OpCode.Resume.code,
@@ -137,6 +138,7 @@ class DiscordClient {
          * Disconnect the current client
          */
         private fun disconnect() {
+            logger.info { "Disconnecting client" }
             internalClient.disconnect()
         }
 
@@ -146,6 +148,7 @@ class DiscordClient {
          * After being reconnected and receiving the READY event, the client will attempt to send a Resume OpCode
          */
         fun reconnect() {
+            logger.info { "Reconnecting client" }
             disconnect()
             isReconnecting = true
             connect(properties)

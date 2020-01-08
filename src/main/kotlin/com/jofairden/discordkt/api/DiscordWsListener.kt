@@ -22,8 +22,8 @@ internal class DiscordWsListener(
     }
 
     override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-        logger.trace { "Websocket failed" }
-        logger.error { t.localizedMessage }
+        logger.trace { "Websocket error" }
+        t.printStackTrace()
     }
 
     override fun onOpen(webSocket: WebSocket, response: Response) {

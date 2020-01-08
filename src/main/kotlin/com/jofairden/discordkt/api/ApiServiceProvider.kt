@@ -1,4 +1,4 @@
-package com.jofairden.discordkt.util
+package com.jofairden.discordkt.api
 
 import com.jofairden.discordkt.services.AuditLogService
 import com.jofairden.discordkt.services.ChannelService
@@ -7,15 +7,23 @@ import com.jofairden.discordkt.services.GatewayService
 import com.jofairden.discordkt.services.GuildService
 import com.jofairden.discordkt.services.InviteService
 import com.jofairden.discordkt.services.UserService
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
 
-internal object ServiceUtil {
-
-    private const val API_URL = "https://discordapp.com/api/"
+internal class ApiServiceProvider(
+    /**
+     * The client should be injected by the internal discord client
+     */
+    httpClient: OkHttpClient
+) {
+    companion object {
+        const val API_URL = "https://discordapp.com/api/"
+    }
 
     private val discordApi = Retrofit.Builder()
         .baseUrl(API_URL)
+        .client(httpClient)
         .addConverterFactory(JacksonConverterFactory.create())
         .build()
 
