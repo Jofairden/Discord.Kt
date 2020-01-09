@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 class DiscordUser(
 
     @JsonProperty("id")
-    val snowflakeId: String,
+    val id: String,
 
     @JsonProperty("username")
     val username: String,
@@ -39,4 +39,7 @@ class DiscordUser(
 
     @JsonProperty("premium_type")
     val nitroType: NitroType?
-)
+) {
+
+    val avatarUrl = "https://cdn.discordapp.com/avatars/${id}/${avatarHash}.png"
+}

@@ -2,6 +2,8 @@ package com.jofairden.discordkt.services
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.jofairden.discordkt.model.discord.guild.Guild
+import com.jofairden.discordkt.model.discord.guild.GuildUser
+import com.jofairden.discordkt.model.discord.role.GuildRole
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PATCH
@@ -53,12 +55,12 @@ interface GuildService {
     suspend fun getGuildMember(
         @Path("guild-id") guildId: Long,
         @Path("user-id") userId: Long
-    ): JsonNode //Guild Member
+    ): GuildUser //Guild Member
 
     @GET("guilds/{guild-id}/members")
     suspend fun getGuildMembers(
         @Path("guild-id") guildId: Long
-    ): ArrayList<JsonNode> //Guild Member
+    ): ArrayList<GuildUser> //Guild Member
 
     @PUT("guilds/{guild-id}/members/{user-id}")
     suspend fun addGuildMember(
@@ -130,26 +132,26 @@ interface GuildService {
     @GET("guilds/{guild-id}/roles")
     suspend fun getGuildRoles(
         @Path("guild-id") guildId: Long
-    ): ArrayList<JsonNode> // Role
+    ): ArrayList<GuildRole>
 
     //MANAGE_ROLES
     @POST("guilds/{guild-id}/roles")
     suspend fun createGuildRole(
         @Path("guild-id") guildId: Long
-    ): JsonNode // Role
+    ): GuildRole
 
     //MANAGE_ROLES
     @PATCH("guilds/{guild-id}/roles")
     suspend fun modifyGuildRolePositions(
         @Path("guild-id") guildId: Long
-    ): ArrayList<JsonNode> // Role
+    ): ArrayList<GuildRole>
 
     //MANAGE_ROLES
     @PATCH("guilds/{guild-id}/roles/{role-id}")
     suspend fun modifyGuildRole(
         @Path("guild-id") guildId: Long,
         @Path("role-id") roleId: Long
-    ): JsonNode // Role
+    ): GuildRole
 
     //MANAGE_ROLES
     @DELETE("guilds/{guild-id}/roles/{role-id}")

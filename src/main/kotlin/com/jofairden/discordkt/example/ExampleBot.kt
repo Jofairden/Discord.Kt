@@ -2,7 +2,14 @@ package com.jofairden.discordkt.example
 
 import com.jofairden.discordkt.api.DiscordClient
 import com.jofairden.discordkt.dsl.onMessageCreate
+import com.jofairden.discordkt.model.discord.message.embed.EmbedAuthor
+import com.jofairden.discordkt.model.discord.message.embed.EmbedField
+import com.jofairden.discordkt.model.discord.message.embed.EmbedFooter
+import com.jofairden.discordkt.model.discord.message.embed.EmbedThumbnail
+import com.jofairden.discordkt.model.discord.message.embed.MessageEmbed
+import com.jofairden.discordkt.model.request.EditMessageBody
 import java.io.File
+import java.util.Date
 
 class ExampleBot
 
@@ -10,9 +17,41 @@ class ExampleBot
 fun main() {
     DiscordClient.buildAndRun(getBotToken()) {
         onMessageCreate { msg ->
-            if (msg.content ?: "" == ".ping") {
+            if (msg.author.id == botUser.id
+                && msg.content == "pong!"
+            ) {
+                with(msg) {
+                    edit(
+                        EditMessageBody(
+                            "pong! (${Date().time - msg.timestamp.time} ms)"
+                        )
+                    )
+                }
+            } else if (msg.content == ".ping") {
                 with(msg) {
                     reply("pong!")
+                }
+            } else if (msg.content == ".me") {
+                with(msg) {
+                    val roles = with(msg.authorGuildUser!!) {
+                        this@buildAndRun.getRoles(msg.guildId!!)
+                    }
+                    reply(
+                        MessageEmbed(
+                            title = "User info: ${msg.author.username}#${msg.author.discriminator}",
+                            author = EmbedAuthor(msg.author.username),
+                            thumbnail = EmbedThumbnail(msg.author.avatarUrl),
+                            fields = arrayOf(
+                                EmbedField(
+                                    "Roles",
+                                    if (roles.isNotEmpty()) roles.joinToString(",") { it.name } else "None",
+                                    inline = true
+                                ),
+                                EmbedField("ID", msg.author.id, inline = true)
+                            ),
+                            footer = EmbedFooter("Requested on ${Date()}")
+                        )
+                    )
                 }
             }
         }

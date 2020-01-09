@@ -4,8 +4,10 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.JsonNode
 import com.jofairden.discordkt.api.DiscordClient
 import com.jofairden.discordkt.model.discord.guild.GuildUser
+import com.jofairden.discordkt.model.discord.message.embed.MessageEmbed
 import com.jofairden.discordkt.model.discord.user.DiscordUser
 import com.jofairden.discordkt.model.request.CreateMessageBody
+import com.jofairden.discordkt.model.request.EditMessageBody
 import java.util.Date
 
 data class DiscordMessage(
@@ -87,6 +89,21 @@ data class DiscordMessage(
         this.serviceProvider.channelService.postChannelMessage(
             channelId,
             CreateMessageBody(text)
+        )
+    }
+
+    suspend fun DiscordClient.reply(embed: MessageEmbed) {
+        this.serviceProvider.channelService.postChannelMessage(
+            channelId,
+            CreateMessageBody("", embed = embed)
+        )
+    }
+
+    suspend fun DiscordClient.edit(body: EditMessageBody) {
+        serviceProvider.channelService.editMessage(
+            channelId,
+            id,
+            body
         )
     }
 }

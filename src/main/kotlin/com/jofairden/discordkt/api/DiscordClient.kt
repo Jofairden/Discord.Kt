@@ -3,6 +3,7 @@ package com.jofairden.discordkt.api
 import com.fasterxml.jackson.databind.JsonNode
 import com.jofairden.discordkt.api.cache.DataCache
 import com.jofairden.discordkt.model.api.DiscordClientProperties
+import com.jofairden.discordkt.model.discord.user.DiscordUser
 import com.jofairden.discordkt.model.gateway.GatewayEvent
 import com.jofairden.discordkt.model.gateway.OpCode
 import com.jofairden.discordkt.model.gateway.payload.GatewayPayload
@@ -30,12 +31,14 @@ class DiscordClient {
         }
     }
 
+    lateinit var botUser: DiscordUser
+
     private val logger = KotlinLogging.logger { }
     private val internalClient = InternalClient(this)
     internal val dataCache = DataCache()
     internal lateinit var properties: DiscordClientProperties
     internal lateinit var serviceProvider: ApiServiceProvider
-    internal var sessionId: Int? = null
+    internal var sessionId: String? = null
     internal var sequenceNumber: Int? = null
 
     fun connect(properties: DiscordClientProperties) {

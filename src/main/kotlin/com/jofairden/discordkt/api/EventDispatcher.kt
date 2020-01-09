@@ -24,8 +24,10 @@ internal class EventDispatcher(
                 GatewayEvent.Hello -> {
                 }
                 GatewayEvent.Ready -> {
-                    sessionId = node["session_id"].asInt()
                     val ctx = parseNode<ReadyEventContext>(node)
+                    sessionId = ctx.sessionId
+                    botUser = ctx.botUser
+
                     ctx.guilds.forEach {
                         val id = it.id.toLong()
                         dataCache.guilds.put(id, serviceProvider.guildService.getGuild(id))

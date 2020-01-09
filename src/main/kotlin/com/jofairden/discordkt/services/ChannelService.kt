@@ -1,7 +1,9 @@
 package com.jofairden.discordkt.services
 
 import com.fasterxml.jackson.databind.JsonNode
+import com.jofairden.discordkt.model.discord.message.DiscordMessage
 import com.jofairden.discordkt.model.request.CreateMessageBody
+import com.jofairden.discordkt.model.request.EditMessageBody
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -51,7 +53,7 @@ interface ChannelService {
     suspend fun postChannelMessage(
         @Path("channel-id") id: Long,
         @Body body: CreateMessageBody
-    ): JsonNode
+    ): DiscordMessage
 
     @PUT("channels/{channel-id}/messages/{message-id}/reactions/{emoji}/@me")
     suspend fun createReaction(
@@ -91,7 +93,8 @@ interface ChannelService {
     @PATCH("channels/{channel-id}/messages/{message-id}")
     suspend fun editMessage(
         @Path("channel-id") channelId: Long,
-        @Path("message-id") messageId: Long
+        @Path("message-id") messageId: Long,
+        @Body body: EditMessageBody
     ): JsonNode
 
     @DELETE("channels/{channel-id}/messages/{message-id}")
