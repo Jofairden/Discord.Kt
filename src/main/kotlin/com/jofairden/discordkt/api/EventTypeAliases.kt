@@ -20,6 +20,7 @@ import com.jofairden.discordkt.model.context.event.ReadyEventContext
 import com.jofairden.discordkt.model.context.event.TypingStartEventContext
 import com.jofairden.discordkt.model.discord.guild.Guild
 import com.jofairden.discordkt.model.discord.guild.UnavailableGuild
+import com.jofairden.discordkt.model.discord.message.DiscordMessage
 import com.jofairden.discordkt.model.discord.user.DiscordUser
 
 typealias EventContextBlock<T> = suspend (ctx: T) -> Unit
@@ -46,7 +47,7 @@ typealias GuildMembersChunkEventBlock = EventContextBlock<GuildMembersChunkEvent
 typealias GuildRoleCreateEventBlock = EventContextBlock<GuildRoleEventContext>
 typealias GuildRoleUpdateEventBlock = EventContextBlock<GuildRoleEventContext>
 typealias GuildRoleDeleteEventBlock = EventContextBlock<GuildRoleIdEventContext>
-typealias ChannelMessageEventBlock = suspend (message: JsonNode) -> Unit // Message
+typealias ChannelMessageEventBlock = suspend (message: DiscordMessage) -> Unit // Message
 typealias MessageCreateEventBlock = ChannelMessageEventBlock
 typealias MessageUpdateEventBlock = ChannelMessageEventBlock
 typealias MessageDeleteEventBlock = EventContextBlock<MessageDeleteEventContext>

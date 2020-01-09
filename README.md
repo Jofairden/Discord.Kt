@@ -5,9 +5,26 @@ A Discord library written in Kotlin for Kotlin. The purpose of the library is to
 The library is not yet released.
 To use it you must pull the repository and locally install it.
 
+# Basic example
+```kotlin
+fun main() {
+    DiscordClient.buildAndRun(getBotToken()) {
+        onMessageCreate { msg ->
+            if (msg.content ?: "" == ".ping") {
+                with(msg) {
+                    reply("pong!")
+                }
+            }
+        }
+    }
+}
+```
+
 # Feature set
-Current lib features:
+Current lib features: (list incomplete)
 - [x] Connect with Discord
+- [x] Reply to messages
+- [ ] Change bot details (name, presence etc)
 
 # Dev task list
 List of things completed, and things yet to be done.

@@ -1,8 +1,11 @@
 package com.jofairden.discordkt.services
 
 import com.fasterxml.jackson.databind.JsonNode
+import com.jofairden.discordkt.model.request.CreateMessageBody
+import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.Headers
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -43,9 +46,11 @@ interface ChannelService {
     ): JsonNode
 
     // Requires SEND_MESSAGES perm (SEND_TTS_MESSAGES with tts=true)
+    @Headers("Content-Type: application/json")
     @POST("channels/{channel-id}/messages")
     suspend fun postChannelMessage(
-        @Path("channel-id") id: Long
+        @Path("channel-id") id: Long,
+        @Body body: CreateMessageBody
     ): JsonNode
 
     @PUT("channels/{channel-id}/messages/{message-id}/reactions/{emoji}/@me")

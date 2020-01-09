@@ -5,7 +5,7 @@ import com.jofairden.discordkt.model.discord.user.DiscordUser
 
 data class GuildUser(
     @JsonProperty("user")
-    val discordUser: DiscordUser,
+    val discordUser: DiscordUser?,
 
     @JsonProperty("nick")
     val nickname: String?,
