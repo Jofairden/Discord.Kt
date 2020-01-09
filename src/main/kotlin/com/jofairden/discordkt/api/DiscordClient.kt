@@ -3,7 +3,6 @@ package com.jofairden.discordkt.api
 import com.fasterxml.jackson.databind.JsonNode
 import com.jofairden.discordkt.api.cache.DataCache
 import com.jofairden.discordkt.model.api.DiscordClientProperties
-import com.jofairden.discordkt.model.context.event.ReadyEventContext
 import com.jofairden.discordkt.model.gateway.GatewayEvent
 import com.jofairden.discordkt.model.gateway.OpCode
 import com.jofairden.discordkt.model.gateway.payload.GatewayPayload
@@ -16,6 +15,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import mu.KotlinLogging
+
+@DslMarker
+annotation class DiscordClientDsl
 
 class DiscordClient {
 
@@ -30,7 +32,7 @@ class DiscordClient {
 
     private val logger = KotlinLogging.logger { }
     private val internalClient = InternalClient(this)
-    private val dataCache = DataCache()
+    internal val dataCache = DataCache()
     internal lateinit var properties: DiscordClientProperties
     internal lateinit var serviceProvider: ApiServiceProvider
     internal var sessionId: Int? = null
@@ -42,19 +44,37 @@ class DiscordClient {
     }
 
     //MutableList<suspend (ctx : T) -> Unit> where T : EventContext
-    private val readyEventHandlers: MutableList<ReadyEventBlock> = ArrayList()
-
-    fun onReady(block: ReadyEventBlock) {
-        readyEventHandlers += block
-    }
-
-    suspend fun ready(ctx: ReadyEventContext) {
-        ctx.guilds.forEach {
-            val id = it.id.toLong()
-            dataCache.guilds.put(id, serviceProvider.guildService.getGuild(id))
-        }
-        readyEventHandlers.forEach { it(ctx) }
-    }
+    internal val readyEventHandlers: MutableList<ReadyEventBlock> = arrayListOf()
+    internal val resumedEventBlocks: MutableList<NoArgsEventBlock> = arrayListOf()
+    internal val invalidSessionEventBlocks: MutableList<InvalidSessionEventBlock> = arrayListOf()
+    internal val channelCreateEventBlocks: MutableList<ChannelEventBlock> = arrayListOf()
+    internal val channelUpdateEventBlocks: MutableList<ChannelEventBlock> = arrayListOf()
+    internal val channelDeleteEventBlocks: MutableList<ChannelEventBlock> = arrayListOf()
+    internal val channelPinsUpdateEventBlocks: MutableList<ChannelPinsUpdateEventBlock> = arrayListOf()
+    internal val guildCreateEventBlocks: MutableList<GuildEventBlock> = arrayListOf()
+    internal val guildUpdateEventBlocks: MutableList<GuildEventBlock> = arrayListOf()
+    internal val guildDeleteEventBlocks: MutableList<GuildDeleteEventBlock> = arrayListOf()
+    internal val guildBanAddEventBlocks: MutableList<GuildBanEventBlock> = arrayListOf()
+    internal val guildBanRemoveEventBlocks: MutableList<GuildBanEventBlock> = arrayListOf()
+    internal val guildEmojisUpdateEventBlocks: MutableList<GuildEmojisUpdateEventBlock> = arrayListOf()
+    internal val guildIntegrationsUpdateEventBlocks: MutableList<GuildIdEventBlock> = arrayListOf()
+    internal val guildMemberAddEventBlocks: MutableList<GuildMemberAddEventBlock> = arrayListOf()
+    internal val guildMemberRemoveEventBlocks: MutableList<GuildMemberRemoveEventBlock> = arrayListOf()
+    internal val guildMemberUpdateEventBlocks: MutableList<GuildMemberUpdateEventBlock> = arrayListOf()
+    // TODO should this be exposed?
+    internal val guildMembersChunkEventBlocks: MutableList<GuildMembersChunkEventBlock> = arrayListOf()
+    internal val guildRoleCreateEventBlocks: MutableList<GuildRoleCreateEventBlock> = arrayListOf()
+    internal val guildRoleUpdateEventBlocks: MutableList<GuildRoleUpdateEventBlock> = arrayListOf()
+    internal val guildRoleDeleteEventBlocks: MutableList<GuildRoleDeleteEventBlock> = arrayListOf()
+    internal val messageCreateEventBlocks: MutableList<MessageCreateEventBlock> = arrayListOf()
+    internal val messageUpdateEventBlocks: MutableList<MessageUpdateEventBlock> = arrayListOf()
+    internal val messageDeleteEventBlocks: MutableList<MessageDeleteEventBlock> = arrayListOf()
+    internal val messageDeleteBulkEventBlocks: MutableList<MessageDeleteBulkEventBlock> = arrayListOf()
+    internal val messageReactionAddEventBlocks: MutableList<MessageReactionAddEventBlock> = arrayListOf()
+    internal val messageReactionRemoveEventBlocks: MutableList<MessageReactionRemoveEventBlock> = arrayListOf()
+    internal val messageReactionRemoveAllEventBlocks: MutableList<MessageReactionRemoveAllEventBlock> = arrayListOf()
+    internal val typingStartEventBlocks: MutableList<TypingStartEventBlock> = arrayListOf()
+    internal val userUpdateEventBlocks: MutableList<UserUpdateEventBlock> = arrayListOf()
 
     internal inner class GatewayGuardian(
         private val eventDispatcher: EventDispatcher

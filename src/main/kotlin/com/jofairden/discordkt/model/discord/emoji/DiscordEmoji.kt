@@ -3,7 +3,7 @@ package com.jofairden.discordkt.model.discord.emoji
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.JsonNode
 
-data class GuildEmoji(
+data class DiscordEmoji(
     @JsonProperty("id")
     val id: Long?,
     @JsonProperty("name")

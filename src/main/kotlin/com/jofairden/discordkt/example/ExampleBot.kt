@@ -1,6 +1,8 @@
 package com.jofairden.discordkt.example
 
 import com.jofairden.discordkt.api.DiscordClient
+import com.jofairden.discordkt.dsl.onReady
+import com.jofairden.discordkt.dsl.onTypingStart
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
@@ -20,6 +22,9 @@ class ExampleBot {
         DiscordClient.buildAndRun(token) {
             onReady {
                 logger.info { "I am now ready! I am ${it.botUser.username}" }
+            }
+            onTypingStart {
+                logger.info { "Typing ${it.user?.discordUser?.username}" }
             }
         }
 

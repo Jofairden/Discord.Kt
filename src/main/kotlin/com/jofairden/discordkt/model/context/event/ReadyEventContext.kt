@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.jofairden.discordkt.model.discord.guild.UnavailableGuild
 import com.jofairden.discordkt.model.discord.user.DiscordUser
 
-class ReadyEventContext(
+data class ReadyEventContext(
     @JsonProperty("v")
     val gatewayProtocolVersion: Int,
 

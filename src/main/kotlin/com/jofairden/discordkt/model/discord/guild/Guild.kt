@@ -2,7 +2,7 @@ package com.jofairden.discordkt.model.discord.guild
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.JsonNode
-import com.jofairden.discordkt.model.discord.emoji.GuildEmoji
+import com.jofairden.discordkt.model.discord.emoji.DiscordEmoji
 import com.jofairden.discordkt.model.discord.role.GuildRole
 import com.jofairden.discordkt.model.discord.user.DiscordUserPresence
 
@@ -57,7 +57,7 @@ data class Guild(
     val roles: Array<GuildRole>, // Role
 
     @JsonProperty("emojis")
-    val emojis: Array<GuildEmoji>, // Emoji
+    val emojis: Array<DiscordEmoji>, // Emoji
 
     @JsonProperty("features")
     val features: Array<GuildFeature>, // Feature
