@@ -16,14 +16,14 @@ List of things completed, and things yet to be done.
 - [x] Handle connection resumption
 - [x] Message Dispatcher
 - [x] Event Dispatcher (high prio)
-- [ ] Event hooking (high prio)
+- [x] Event hooking (high prio)
 - [ ] Sharding (low prio)
 - [ ] Rate limiting (low prio)
 - [x] WebSocket failure reporter
 - [ ] Required permission checking (high prio)
 - [x] Retrofit services for all resources
 - [ ] Storing resources (cache) (high prio)
-- [ ] Model classes for Guild, User, Role and all other associated resources
+- [x] Model classes for Guild, User, Role and all other associated resources
 - [ ] Command module registration
 
 # Libraries

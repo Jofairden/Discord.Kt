@@ -1,10 +1,8 @@
 package com.jofairden.discordkt.model.discord.guild
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.jofairden.discordkt.model.discord.user.DiscordUser
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 data class GuildUser(
     @JsonProperty("user")
     val discordUser: DiscordUser,
