@@ -27,6 +27,7 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${gradleProperty("coroutines-version")}")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:${gradleProperty("coroutines-version")}")
     implementation("com.squareup.okhttp3:okhttp:${gradleProperty("okhttp-version")}")
     implementation("com.fasterxml.jackson.core:jackson-core:${gradleProperty("jackson-version")}")
     implementation("com.fasterxml.jackson.core:jackson-annotations:${gradleProperty("jackson-version")}")

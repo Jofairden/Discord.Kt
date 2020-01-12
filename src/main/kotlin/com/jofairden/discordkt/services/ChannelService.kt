@@ -38,14 +38,14 @@ interface ChannelService {
     @GET("channels/{channel-id}/messages")
     suspend fun getChannelMessages(
         @Path("channel-id") id: Long
-    ): Array<JsonNode> // Message
+    ): Array<DiscordMessage> // Message
 
     // Requires READ_MESSAGE_HISTORY perm
     @GET("channels/{id}/messages{message-id}")
     suspend fun getChannelMessage(
         @Path("channel-id") id: Long,
         @Path("message-id") messageId: Long
-    ): JsonNode
+    ): DiscordMessage
 
     // Requires SEND_MESSAGES perm (SEND_TTS_MESSAGES with tts=true)
     @Headers("Content-Type: application/json")

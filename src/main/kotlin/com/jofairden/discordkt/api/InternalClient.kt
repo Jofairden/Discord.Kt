@@ -1,5 +1,6 @@
 package com.jofairden.discordkt.api
 
+import com.jofairden.discordkt.api.cache.DataCache
 import com.jofairden.discordkt.model.gateway.GatewayCloseEventCode
 import com.jofairden.discordkt.model.gateway.OpAction
 import com.jofairden.discordkt.model.gateway.OpCode
@@ -29,6 +30,7 @@ internal class InternalClient(
             .build()
         // Inject client into Retrofit SP
         discordClient.serviceProvider = ApiServiceProvider(client)
+        discordClient.dataCache = DataCache(discordClient.properties.dataCacheProperties, discordClient.serviceProvider)
 
         logger.info { "Connecting to Discord..." }
         createWebsocket()

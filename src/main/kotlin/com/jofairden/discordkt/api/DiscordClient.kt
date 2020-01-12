@@ -35,7 +35,7 @@ class DiscordClient {
 
     private val logger = KotlinLogging.logger { }
     private val internalClient = InternalClient(this)
-    internal val dataCache = DataCache()
+    internal lateinit var dataCache: DataCache
     internal lateinit var properties: DiscordClientProperties
     internal lateinit var serviceProvider: ApiServiceProvider
     internal var sessionId: String? = null

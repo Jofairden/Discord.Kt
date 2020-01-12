@@ -5,7 +5,7 @@ import com.jofairden.discordkt.model.discord.PermissionBitSet
 
 data class GuildRole(
 
-    @JsonProperty(" id")
+    @JsonProperty("id")
     val id: Long,
 
     @JsonProperty("name")

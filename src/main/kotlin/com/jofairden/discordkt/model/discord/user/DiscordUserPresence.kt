@@ -8,7 +8,7 @@ data class DiscordUserPresence(
     val user: JsonNode,
 
     @JsonProperty("roles")
-    val roleIds: Array<Long>,
+    val roleIds: Array<Long>?,
 
     @JsonProperty("game")
     val activity: JsonNode?,

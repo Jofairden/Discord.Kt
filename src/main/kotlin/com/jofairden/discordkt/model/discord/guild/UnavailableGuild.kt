@@ -8,6 +8,6 @@ class UnavailableGuild(
     val unavailable: Boolean,
 
     @JsonProperty("id")
-    val id: String
+    val id: Long
 
 )

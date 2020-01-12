@@ -33,9 +33,10 @@ fun main() {
                 }
             } else if (msg.content == ".me") {
                 with(msg) {
-                    val roles = with(msg.authorGuildUser!!) {
-                        this@buildAndRun.getRoles(msg.guildId!!)
-                    }
+                    val roleField =
+                        if (msg.authorGuildUser?.roles?.isNotEmpty() == true) msg.authorGuildUser.roles.joinToString(",") { it.name }
+                        else "None"
+
                     reply(
                         MessageEmbed(
                             title = "User info: ${msg.author.username}#${msg.author.discriminator}",
@@ -44,7 +45,7 @@ fun main() {
                             fields = arrayOf(
                                 EmbedField(
                                     "Roles",
-                                    if (roles.isNotEmpty()) roles.joinToString(",") { it.name } else "None",
+                                    roleField,
                                     inline = true
                                 ),
                                 EmbedField("ID", msg.author.id, inline = true)

@@ -1,10 +1,13 @@
 package com.jofairden.discordkt.model.discord.guild
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.jofairden.discordkt.api.DiscordClient
+import com.jofairden.discordkt.model.discord.role.GuildRole
 import com.jofairden.discordkt.model.discord.user.DiscordUser
 import java.util.Date
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class GuildUser(
     @JsonProperty("user")
     val discordUser: DiscordUser?,
@@ -27,7 +30,7 @@ data class GuildUser(
     @JsonProperty("muted")
     val isMutedInVoice: Boolean
 ) {
-    // TODO this is shitty
-    suspend fun DiscordClient.getRoles(id: Long) =
-        serviceProvider.guildService.getGuildRoles(id).filter { roleIds.contains(it.id) }
+    @JsonIgnore
+    var roles = listOf<GuildRole>()
+        internal set
 }

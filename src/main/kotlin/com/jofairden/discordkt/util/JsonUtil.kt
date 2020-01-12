@@ -8,7 +8,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 
 internal object JsonUtil {
-    val Mapper = ObjectMapper()
+    val Mapper: ObjectMapper = ObjectMapper()
         .findAndRegisterModules()
         .registerKotlinModule()
         .registerModule(Jdk8Module())

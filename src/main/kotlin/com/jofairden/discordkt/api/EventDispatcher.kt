@@ -2,8 +2,12 @@ package com.jofairden.discordkt.api
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ObjectNode
+import com.jofairden.discordkt.model.context.event.GuildMemberAddEventContext
 import com.jofairden.discordkt.model.context.event.ReadyEventContext
+import com.jofairden.discordkt.model.discord.guild.Guild
 import com.jofairden.discordkt.model.discord.guild.UnavailableGuild
+import com.jofairden.discordkt.model.discord.message.DiscordMessage
+import com.jofairden.discordkt.model.discord.message.DiscordMessageUpdate
 import com.jofairden.discordkt.model.gateway.GatewayEvent
 import com.jofairden.discordkt.util.JsonUtil
 import mu.KotlinLogging
@@ -28,9 +32,9 @@ internal class EventDispatcher(
                     sessionId = ctx.sessionId
                     botUser = ctx.botUser
 
-                    ctx.guilds.forEach {
-                        val id = it.id.toLong()
-                        dataCache.guilds.put(id, serviceProvider.guildService.getGuild(id))
+                    ctx.guilds.forEach { g ->
+                        val guild = serviceProvider.guildService.getGuild(g.id)
+                        dataCache.cacheGuild(guild)
                     }
                     readyEventHandlers.forEach { it(ctx) }
                 }
@@ -55,7 +59,9 @@ internal class EventDispatcher(
                     channelPinsUpdateEventBlocks.forEach { it(parseNode(node)) }
                 }
                 GatewayEvent.GuildCreate -> {
-                    guildCreateEventBlocks.forEach { it(parseNode(node)) }
+                    val guild = parseNode<Guild>(node)
+                    dataCache.cacheGuild(guild)
+                    guildCreateEventBlocks.forEach { it(guild) }
                 }
                 GatewayEvent.GuildUpdate -> {
                     guildUpdateEventBlocks.forEach { it(parseNode(node)) }
@@ -77,8 +83,12 @@ internal class EventDispatcher(
                     guildIntegrationsUpdateEventBlocks.forEach { it(parseNode(node)) }
                 }
                 GatewayEvent.GuildMemberAdd -> {
-                    // Strip extra guild_id field (WHY DISCORD?)
-                    guildMemberAddEventBlocks.forEach { it(parseNode((node as ObjectNode).remove("guild_id"))) }
+                    val guildId = node.get("guild_id").asLong()
+                    // Strip extra guild_id field and append to ctx (WHY DISCORD?)
+                    val ctxNode = parseNode<GuildMemberAddEventContext>((node as ObjectNode).remove("guild_id")).also {
+                        it.guildId = guildId
+                    }
+                    guildMemberAddEventBlocks.forEach { it(ctxNode) }
                 }
                 GatewayEvent.GuildMemberRemove -> {
                     guildMemberRemoveEventBlocks.forEach { it(parseNode(node)) }
@@ -100,10 +110,18 @@ internal class EventDispatcher(
                     guildRoleDeleteEventBlocks.forEach { it(parseNode(node)) }
                 }
                 GatewayEvent.MessageCreate -> {
-                    messageCreateEventBlocks.forEach { it(parseNode(node)) }
+                    var message = parseNode<DiscordMessage>(node)
+                    message = dataCache.enrich(message)
+                    dataCache.cacheMessage(message)
+                    messageCreateEventBlocks.forEach { it(message) }
                 }
                 GatewayEvent.MessageUpdate -> {
-                    messageUpdateEventBlocks.forEach { it(parseNode(node)) }
+                    val update = parseNode<DiscordMessageUpdate>(node)
+                    var message = dataCache.getMessage(update.channelId, update.id)
+                    message = message.copyFromMessageUpdate(update)
+                    message = dataCache.enrich(message)
+                    dataCache.cacheMessage(message)
+                    messageUpdateEventBlocks.forEach { it(message) }
                 }
                 GatewayEvent.MessageDelete -> {
                     messageDeleteEventBlocks.forEach { it(parseNode(node)) }

@@ -1,8 +1,13 @@
 package com.jofairden.discordkt.model.discord
 
-import com.fasterxml.jackson.annotation.JsonValue
+import com.fasterxml.jackson.annotation.JsonCreator
 
 data class PermissionBitSet(
-    @JsonValue
     val value: Int
-)
+) {
+    companion object {
+        @JvmStatic
+        @JsonCreator
+        fun create(value: Int): PermissionBitSet = PermissionBitSet(value)
+    }
+}

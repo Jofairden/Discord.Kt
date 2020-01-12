@@ -85,6 +85,27 @@ data class DiscordMessage(
     val flags: Int
 
 ) {
+
+    fun copyFromMessageUpdate(update: DiscordMessageUpdate) =
+        this.copy(
+            content = update.content,
+            editedTimestamp = update.editedTimestamp ?: this.editedTimestamp,
+            isTts = update.isTts ?: this.isTts,
+            mentionsEveryone = update.mentionsEveryone ?: this.mentionsEveryone,
+            mentions = update.mentions ?: this.mentions,
+            mentionedRoleIds = update.mentionedRoleIds ?: this.mentionedRoleIds,
+            mentionedChannels = update.mentionedChannels ?: this.mentionedChannels,
+            attachments = update.attachments ?: this.attachments,
+            embeds = update.embeds ?: this.embeds,
+            reactions = update.reactions ?: this.reactions,
+            nonce = update.nonce ?: this.nonce,
+            isPinned = update.isPinned ?: this.isPinned,
+            activity = update.activity ?: this.activity,
+            application = update.application ?: this.application,
+            referenceData = update.referenceData ?: this.referenceData,
+            flags = update.flags ?: this.flags
+        )
+
     suspend fun DiscordClient.reply(text: String) {
         this.serviceProvider.channelService.postChannelMessage(
             channelId,
