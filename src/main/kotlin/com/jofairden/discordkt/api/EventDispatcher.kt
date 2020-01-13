@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.jofairden.discordkt.api.cache.CombinedId
 import com.jofairden.discordkt.api.cache.getSuspending
+import com.jofairden.discordkt.model.context.event.ChannelCreateEventContext
 import com.jofairden.discordkt.model.context.event.GuildMemberAddEventContext
 import com.jofairden.discordkt.model.context.event.ReadyEventContext
+import com.jofairden.discordkt.model.discord.channel.DiscordChannel
 import com.jofairden.discordkt.model.discord.guild.Guild
 import com.jofairden.discordkt.model.discord.guild.GuildUser
 import com.jofairden.discordkt.model.discord.guild.UnavailableGuild
@@ -16,7 +18,7 @@ import com.jofairden.discordkt.util.JsonUtil
 import mu.KotlinLogging
 
 internal class EventDispatcher(
-    private val discordClient: DiscordClient
+    private val client: DiscordClient
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -26,7 +28,7 @@ internal class EventDispatcher(
     suspend fun dispatch(event: GatewayEvent, node: JsonNode) {
         logger.info { "Event being dispatched: ${event.name}" }
 
-        with(discordClient) {
+        with(client) {
             when (event) {
                 GatewayEvent.Hello -> {
                 }
@@ -36,7 +38,7 @@ internal class EventDispatcher(
                     botUser = ctx.botUser
 
                     ctx.guilds.forEach { g ->
-                        val guild = dataCache.guilds.getSuspending(g.id)
+                        val guild = dataCache.guildCache.getSuspending(g.id)
                         logger.info { "Loaded guild ${guild.id}" }
                     }
                     readyEventHandlers.forEach { it(ctx) }
@@ -50,13 +52,17 @@ internal class EventDispatcher(
                     invalidSessionEventBlocks.forEach { it(node.asBoolean()) }
                 }
                 GatewayEvent.ChannelCreate -> {
-                    channelUpdateEventBlocks.forEach { it(node) }
+                    val channel = parseNode<DiscordChannel>(node)
+                    dataCache.cacheChannel(channel)
+                    channelCreateEventBlocks.forEach { it(ChannelCreateEventContext(client, channel)) }
                 }
                 GatewayEvent.ChannelUpdate -> {
-                    channelUpdateEventBlocks.forEach { it(node) }
+                    val channel = parseNode<DiscordChannel>(node)
+                    dataCache.cacheChannel(channel)
+                    channelUpdateEventBlocks.forEach { it(channel) }
                 }
                 GatewayEvent.ChannelDelete -> {
-                    channelDeleteEventBlocks.forEach { it(node) }
+                    channelDeleteEventBlocks.forEach { it(parseNode(node)) }
                 }
                 GatewayEvent.ChannelPinsUpdate -> {
                     channelPinsUpdateEventBlocks.forEach { it(parseNode(node)) }

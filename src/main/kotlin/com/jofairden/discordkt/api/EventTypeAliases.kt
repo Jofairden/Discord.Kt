@@ -1,6 +1,6 @@
 package com.jofairden.discordkt.api
 
-import com.fasterxml.jackson.databind.JsonNode
+import com.jofairden.discordkt.model.context.event.ChannelCreateEventContext
 import com.jofairden.discordkt.model.context.event.ChannelPinsUpdateEventContext
 import com.jofairden.discordkt.model.context.event.GuildBanEventContext
 import com.jofairden.discordkt.model.context.event.GuildEmojisUpdateEventContext
@@ -18,17 +18,19 @@ import com.jofairden.discordkt.model.context.event.MessageReactionRemoveAllEvent
 import com.jofairden.discordkt.model.context.event.MessageReactionRemoveEventContext
 import com.jofairden.discordkt.model.context.event.ReadyEventContext
 import com.jofairden.discordkt.model.context.event.TypingStartEventContext
+import com.jofairden.discordkt.model.discord.channel.DiscordChannel
 import com.jofairden.discordkt.model.discord.guild.Guild
 import com.jofairden.discordkt.model.discord.guild.UnavailableGuild
 import com.jofairden.discordkt.model.discord.message.DiscordMessage
 import com.jofairden.discordkt.model.discord.user.DiscordUser
 
-typealias EventContextBlock<T> = suspend (ctx: T) -> Unit
+typealias EventContextBlock<T> = suspend T.() -> Unit
 
 typealias ReadyEventBlock = EventContextBlock<ReadyEventContext>
 typealias NoArgsEventBlock = suspend () -> Unit
 typealias InvalidSessionEventBlock = suspend (mayResume: Boolean) -> Unit
-typealias ChannelEventBlock = suspend (channel: JsonNode) -> Unit // Channel
+typealias ChannelEventBlock = suspend (channel: DiscordChannel) -> Unit // Channel
+typealias ChannelCreateEventBlock = EventContextBlock<ChannelCreateEventContext>
 // typealias ChannelUpdateEventBlock = suspend(channel: JsonNode) -> Unit // Channel
 // typealias ChannelDeleteEventBlock = suspend(channel: JsonNode) -> Unit // Channel
 typealias ChannelPinsUpdateEventBlock = EventContextBlock<ChannelPinsUpdateEventContext>

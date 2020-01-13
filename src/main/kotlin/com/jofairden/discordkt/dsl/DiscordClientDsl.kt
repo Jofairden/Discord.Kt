@@ -1,5 +1,6 @@
 package com.jofairden.discordkt.dsl
 
+import com.jofairden.discordkt.api.ChannelCreateEventBlock
 import com.jofairden.discordkt.api.ChannelEventBlock
 import com.jofairden.discordkt.api.ChannelPinsUpdateEventBlock
 import com.jofairden.discordkt.api.DiscordClient
@@ -44,7 +45,7 @@ fun DiscordClient.onInvalidSession(block: InvalidSessionEventBlock) {
 }
 
 @DiscordClientDsl
-fun DiscordClient.onChannelCreate(block: ChannelEventBlock) {
+fun DiscordClient.onChannelCreate(block: ChannelCreateEventBlock) {
     channelCreateEventBlocks += block
 }
 

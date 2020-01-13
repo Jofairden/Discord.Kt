@@ -2,6 +2,7 @@ package com.jofairden.discordkt.model.discord.guild
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.JsonNode
+import com.jofairden.discordkt.model.discord.channel.DiscordChannel
 import com.jofairden.discordkt.model.discord.emoji.DiscordEmoji
 import com.jofairden.discordkt.model.discord.role.GuildRole
 import com.jofairden.discordkt.model.discord.user.DiscordUserPresence
@@ -97,7 +98,7 @@ data class Guild(
     val members: Array<GuildUser>?, // user
 
     @JsonProperty("channels")
-    val channels: Array<JsonNode>?, // Channel
+    val channels: Array<DiscordChannel>?, // Channel
 
     @JsonProperty("presences")
     val presences: Array<DiscordUserPresence>?, // Partial presence update

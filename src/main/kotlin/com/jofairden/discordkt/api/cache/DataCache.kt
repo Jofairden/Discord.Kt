@@ -4,6 +4,7 @@ import com.github.benmanes.caffeine.cache.AsyncLoadingCache
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.jofairden.discordkt.api.ApiServiceProvider
 import com.jofairden.discordkt.model.api.DataCacheProperties
+import com.jofairden.discordkt.model.discord.channel.DiscordChannel
 import com.jofairden.discordkt.model.discord.emoji.DiscordEmoji
 import com.jofairden.discordkt.model.discord.guild.Guild
 import com.jofairden.discordkt.model.discord.guild.GuildUser
@@ -35,7 +36,7 @@ class DataCache(
     private val serviceProvider: ApiServiceProvider
 ) {
 
-    val guilds = Caffeine.newBuilder()
+    val guildCache = Caffeine.newBuilder()
         .expireAfterAccess(5, TimeUnit.MINUTES)
         .maximumSize(dataCacheProperties.guildCacheMaxSize)
         .buildAsync<Long, Guild>(ApiAsyncLoader { key ->
@@ -44,12 +45,12 @@ class DataCache(
             }
         })
 
-    val guildUsers = Caffeine.newBuilder()
+    val guildUserCache = Caffeine.newBuilder()
         .expireAfterAccess(5, TimeUnit.MINUTES)
         .maximumSize(dataCacheProperties.guildUsersCacheMaxSize)
         .buildAsync<Long, Array<GuildUser>>(ApiAsyncLoader { key -> serviceProvider.guildService.getGuildMembers(key) })
 
-    val guildRoles = Caffeine.newBuilder()
+    val guildRoleCache = Caffeine.newBuilder()
         .expireAfterAccess(5, TimeUnit.MINUTES)
         .maximumSize(dataCacheProperties.guildRolesCacheMaxSize)
         .buildAsync<Long, Array<GuildRole>>(ApiAsyncLoader { key -> serviceProvider.guildService.getGuildRoles(key) })
@@ -64,6 +65,13 @@ class DataCache(
             )
         })
 
+    val channelCache = Caffeine.newBuilder()
+        .expireAfterAccess(5, TimeUnit.MINUTES)
+        .maximumSize(dataCacheProperties.channelCacheMaxSize)
+        .buildAsync<Long, DiscordChannel>(ApiAsyncLoader { key ->
+            serviceProvider.channelService.getChannel(key)
+        })
+
     val messageCache = Caffeine.newBuilder()
         .expireAfterAccess(5, TimeUnit.MINUTES)
         .maximumSize(dataCacheProperties.messageCacheMaxSize)
@@ -74,10 +82,10 @@ class DataCache(
             )
         })
 
-    fun enrich(message: DiscordMessage): DiscordMessage {
+    suspend fun enrich(message: DiscordMessage): DiscordMessage {
         var enrichedMessage = message
         if (message.guildId != null) {
-            val users = guildUsers.get(message.guildId).getNow(arrayOf())
+            val users = guildUserCache.getSuspending(message.guildId)
             val user = users.firstOrNull { it.discordUser?.id == message.author.id }
             enrichedMessage = if (user?.discordUser != null) {
                 enrichedMessage.copy(author = user.discordUser, authorGuildUser = user)
@@ -92,8 +100,8 @@ class DataCache(
     }
 
     suspend fun updateGuildUsers(guildId: Long) {
-        val users = guildUsers.getSuspending(guildId)
-        val roles = guildRoles.getSuspending(guildId)
+        val users = guildUserCache.getSuspending(guildId)
+        val roles = guildRoleCache.getSuspending(guildId)
         users.forEach { user -> user.update(roles) }
     }
 
@@ -110,20 +118,27 @@ class DataCache(
         guild.emojis.filter { it.id != null }.forEach {
             cacheEmoji(guild.id, it)
         }
+        guild.channels?.forEach {
+            cacheChannel(it)
+        }
 
         updateGuildUsers(guild.id)
     }
 
     fun cacheGuildUsers(guildId: Long, members: Array<GuildUser>) {
-        guildUsers.put(guildId, CompletableFuture.completedFuture(members))
+        guildUserCache.put(guildId, CompletableFuture.completedFuture(members))
     }
 
     fun cacheGuildRoles(guildId: Long, roles: Array<GuildRole>) {
-        guildRoles.put(guildId, CompletableFuture.completedFuture(roles))
+        guildRoleCache.put(guildId, CompletableFuture.completedFuture(roles))
     }
 
     fun cacheEmoji(guildId: Long, emoji: DiscordEmoji) {
         guildEmojiCache.put(CombinedId(guildId, emoji.id!!), CompletableFuture.completedFuture(emoji))
+    }
+
+    fun cacheChannel(channel: DiscordChannel) {
+        channelCache.put(channel.id, CompletableFuture.completedFuture(channel))
     }
 
     fun cacheMessage(message: DiscordMessage) {

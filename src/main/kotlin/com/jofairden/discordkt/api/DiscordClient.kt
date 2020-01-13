@@ -50,7 +50,7 @@ class DiscordClient {
     internal val readyEventHandlers: MutableList<ReadyEventBlock> = arrayListOf()
     internal val resumedEventBlocks: MutableList<NoArgsEventBlock> = arrayListOf()
     internal val invalidSessionEventBlocks: MutableList<InvalidSessionEventBlock> = arrayListOf()
-    internal val channelCreateEventBlocks: MutableList<ChannelEventBlock> = arrayListOf()
+    internal val channelCreateEventBlocks: MutableList<ChannelCreateEventBlock> = arrayListOf()
     internal val channelUpdateEventBlocks: MutableList<ChannelEventBlock> = arrayListOf()
     internal val channelDeleteEventBlocks: MutableList<ChannelEventBlock> = arrayListOf()
     internal val channelPinsUpdateEventBlocks: MutableList<ChannelPinsUpdateEventBlock> = arrayListOf()

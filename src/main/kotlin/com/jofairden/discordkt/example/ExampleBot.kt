@@ -1,6 +1,7 @@
 package com.jofairden.discordkt.example
 
 import com.jofairden.discordkt.api.DiscordClient
+import com.jofairden.discordkt.dsl.onChannelCreate
 import com.jofairden.discordkt.dsl.onGuildMemberAdd
 import com.jofairden.discordkt.dsl.onMessageCreate
 import com.jofairden.discordkt.model.discord.message.embed.EmbedAuthor
@@ -20,9 +21,12 @@ fun main() {
     val logger = KotlinLogging.logger {}
 
     DiscordClient.buildAndRun(getBotToken()) {
+        onChannelCreate {
+            sendMessage("Hey, a new channel?")
+        }
         onGuildMemberAdd {
-            val g = it.guild.await()
-            logger.info { "${it.user.discordUser?.username} joined guild ${g.name}" }
+            val g = guild.await()
+            logger.info { "${user.discordUser?.username} joined guild ${g.name}" }
         }
         onMessageCreate { msg ->
             if (msg.author.id == botUser.id

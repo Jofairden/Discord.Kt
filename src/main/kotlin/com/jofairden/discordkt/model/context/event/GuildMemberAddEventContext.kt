@@ -20,7 +20,7 @@ data class GuildMemberAddEventContext(
         internal set
 
     val guild = GlobalScope.async(Dispatchers.Unconfined, start = CoroutineStart.LAZY) {
-        dataCache.guilds.getSuspending(guildId)
+        dataCache.guildCache.getSuspending(guildId)
     }
 }
 

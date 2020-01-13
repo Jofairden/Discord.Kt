@@ -1,6 +1,7 @@
 package com.jofairden.discordkt.services
 
 import com.fasterxml.jackson.databind.JsonNode
+import com.jofairden.discordkt.model.discord.channel.DiscordChannel
 import com.jofairden.discordkt.model.discord.message.DiscordMessage
 import com.jofairden.discordkt.model.request.CreateMessageBody
 import com.jofairden.discordkt.model.request.EditMessageBody
@@ -20,19 +21,19 @@ interface ChannelService {
     @GET("channels/{channel-id}")
     suspend fun getChannel(
         @Path("channel-id") id: Long
-    ): JsonNode
+    ): DiscordChannel
 
     // Requires MANAGE_CHANNELS perm
     @PUT("channels/{channel-id}")
     suspend fun modifyChannel(
         @Path("channel-id") id: Long
-    ): JsonNode
+    ): DiscordChannel
 
     // Requires MANAGE_CHANNELS perm
     @DELETE("channels/{channel-id}")
     suspend fun deleteChannel(
         @Path("channel-id") id: Long
-    ): JsonNode
+    ): DiscordChannel
 
     // Requires VIEW_CHANNEL perm
     @GET("channels/{channel-id}/messages")
@@ -60,14 +61,14 @@ interface ChannelService {
         @Path("channel-id") channelId: Long,
         @Path("message-id") messageId: Long,
         @Path("emoji") emoji: String
-    ): JsonNode
+    ): JsonNode //204 empty
 
     @DELETE("channels/{channel-id}/messages/{message-id}/reactions/{emoji}/@me")
     suspend fun deleteReaction(
         @Path("channel-id") channelId: Long,
         @Path("message-id") messageId: Long,
         @Path("emoji") emoji: String
-    ): JsonNode
+    ): JsonNode //204 empty
 
     @DELETE("channels/{channel-id}/messages/{message-id}/reactions/{emoji}/{user-id}")
     suspend fun deleteUserReaction(
@@ -75,7 +76,7 @@ interface ChannelService {
         @Path("message-id") messageId: Long,
         @Path("emoji") emoji: String,
         @Path("user-id") userId: Long
-    ): JsonNode
+    ): JsonNode //204 empty
 
     @GET("channels/{channel-id}/messages/{message-id}/reactions/{emoji}")
     suspend fun getReactions(
@@ -95,24 +96,24 @@ interface ChannelService {
         @Path("channel-id") channelId: Long,
         @Path("message-id") messageId: Long,
         @Body body: EditMessageBody
-    ): JsonNode
+    ): DiscordMessage
 
     @DELETE("channels/{channel-id}/messages/{message-id}")
     suspend fun deleteMessage(
         @Path("channel-id") channelId: Long,
         @Path("message-id") messageId: Long
-    ): JsonNode
+    ): JsonNode // 204 empty
 
     @POST("channels/{channel-id}/messages/bulk-delete")
     suspend fun bulkDeleteMessages(
         @Path("channel-id") channelId: Long
-    ): JsonNode
+    ): JsonNode //204 empty
 
     @PUT("channels/{channel-id}/permissions/{overwrite-id}")
     suspend fun editChannelPermissions(
         @Path("channel-id") channelId: Long,
         @Path("overwrite-id") overwriteId: Long
-    ): JsonNode
+    ): JsonNode//204 empty
 
     @GET("channels/{channel-id}/invites")
     suspend fun getChannelInvites(
@@ -128,29 +129,29 @@ interface ChannelService {
     suspend fun deleteChannelPermission(
         @Path("channel-id") channelId: Long,
         @Path("overwrite-id") overwriteId: Long
-    ): JsonNode
+    ): JsonNode//204 empty
 
     @POST("channels/{channel-id}/typing")
     suspend fun triggerTypingIndicator(
         @Path("channel-id") channelId: Long
-    ): JsonNode
+    ): JsonNode//204 empty
 
     @GET("channels/{channel-id}/pins")
     suspend fun getPinnedMessages(
         @Path("channel-id") channelId: Long
-    ): JsonNode
+    ): Array<DiscordMessage>
 
     @PUT("channels/{channel-id}/pins/{message-id}")
     suspend fun addPinnedChannelMessage(
         @Path("channel-id") channelId: Long,
         @Path("message-id") messagedId: Long
-    ): JsonNode
+    ): JsonNode//204 empty
 
     @DELETE("channels/{channel-id}/pins/{message-id}")
     suspend fun deletePinnedChannelMessage(
         @Path("channel-id") channelId: Long,
         @Path("message-id") messagedId: Long
-    ): JsonNode
+    ): JsonNode//204 empty
 
     @PUT("channels/{channel-id}/recipients/{user-id}")
     suspend fun groupDMAddRecipient(

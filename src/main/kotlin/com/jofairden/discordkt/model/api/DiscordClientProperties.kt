@@ -13,5 +13,6 @@ data class DataCacheProperties(
     val guildUsersCacheMaxSize: Long = 10_000,
     val guildRolesCacheMaxSize: Long = 1_000,
     val emojiCacheMaxSize: Long = 10_000,
-    val messageCacheMaxSize: Long = 1_000
+    val messageCacheMaxSize: Long = 1_000,
+    val channelCacheMaxSize: Long = 1_000
 )
