@@ -22,7 +22,9 @@ fun main() {
 
     DiscordClient.buildAndRun(getBotToken()) {
         onChannelCreate {
-            sendMessage("Hey, a new channel?")
+            if (channel.guildId != null) {
+                sendMessage("Hey, a new channel?")
+            }
         }
         onGuildMemberAdd {
             val g = guild.await()

@@ -48,7 +48,14 @@ class DataCache(
     val guildUserCache = Caffeine.newBuilder()
         .expireAfterAccess(5, TimeUnit.MINUTES)
         .maximumSize(dataCacheProperties.guildUsersCacheMaxSize)
-        .buildAsync<Long, Array<GuildUser>>(ApiAsyncLoader { key -> serviceProvider.guildService.getGuildMembers(key) })
+        .buildAsync<Long, Array<GuildUser>>(ApiAsyncLoader { key ->
+            serviceProvider.guildService.getGuildMembers(key).also {
+                val roles = guildRoleCache.getSuspending(key)
+                it.forEach { user ->
+                    user.update(roles)
+                }
+            }
+        })
 
     val guildRoleCache = Caffeine.newBuilder()
         .expireAfterAccess(5, TimeUnit.MINUTES)
@@ -86,6 +93,7 @@ class DataCache(
         var enrichedMessage = message
         if (message.guildId != null) {
             val users = guildUserCache.getSuspending(message.guildId)
+
             val user = users.firstOrNull { it.discordUser?.id == message.author.id }
             enrichedMessage = if (user?.discordUser != null) {
                 enrichedMessage.copy(author = user.discordUser, authorGuildUser = user)
