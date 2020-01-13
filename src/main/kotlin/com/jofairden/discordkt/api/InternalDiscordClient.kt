@@ -13,7 +13,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
 
-internal class InternalClient(
+internal class InternalDiscordClient(
     private val discordClient: DiscordClient
 ) {
     private val logger = KotlinLogging.logger { }
@@ -42,9 +42,11 @@ internal class InternalClient(
     }
 
     fun GatewayPayload.send() {
-        if (OpCode.find(this.op)?.action == OpAction.Receive) {
+        val opCode = OpCode.find(this.op) ?: throw RuntimeException("OpCode ${this.op} not found")
+        if (opCode.action == OpAction.Receive) {
             throw RuntimeException("Impossible to send a gateway payload with an opcode that may only be received")
         }
+        logger.info { "Sending OpCode ${this.op}" }
         webSocket.send(this)
     }
 

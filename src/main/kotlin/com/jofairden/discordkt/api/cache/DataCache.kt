@@ -1,6 +1,6 @@
 package com.jofairden.discordkt.api.cache
 
-import com.github.benmanes.caffeine.cache.AsyncCache
+import com.github.benmanes.caffeine.cache.AsyncLoadingCache
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.jofairden.discordkt.api.ApiServiceProvider
 import com.jofairden.discordkt.model.api.DataCacheProperties
@@ -11,69 +11,73 @@ import com.jofairden.discordkt.model.discord.message.DiscordMessage
 import com.jofairden.discordkt.model.discord.role.GuildRole
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.async
-import kotlinx.coroutines.future.asCompletableFuture
 import kotlinx.coroutines.future.await
+import kotlinx.coroutines.withContext
 import java.util.concurrent.CompletableFuture
-import java.util.concurrent.Executor
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.coroutineContext
 
-internal class DataCache(
+typealias CombinedId = Pair<Long, Long>
+
+/**
+ * Helper function to get from cache in suspending fashion using a suspending call fallback
+ */
+suspend fun <K : Any, V> AsyncLoadingCache<K, V>.getSuspending(key: K): V {
+    val outerContext = coroutineContext // Get the current context
+    val innerContext = outerContext + Job()
+    return withContext(CoroutineScope(innerContext).coroutineContext) {
+        get(key).await()
+    }
+}
+
+class DataCache(
     dataCacheProperties: DataCacheProperties,
     private val serviceProvider: ApiServiceProvider
 ) {
+
     val guilds = Caffeine.newBuilder()
         .expireAfterAccess(5, TimeUnit.MINUTES)
         .maximumSize(dataCacheProperties.guildCacheMaxSize)
-        .buildAsync<Long, Guild>()
+        .buildAsync<Long, Guild>(ApiAsyncLoader { key ->
+            serviceProvider.guildService.getGuild(key).also {
+                cacheGuild(it)
+            }
+        })
 
     val guildUsers = Caffeine.newBuilder()
         .expireAfterAccess(5, TimeUnit.MINUTES)
         .maximumSize(dataCacheProperties.guildUsersCacheMaxSize)
-        .buildAsync<Long, Array<GuildUser>>()
+        .buildAsync<Long, Array<GuildUser>>(ApiAsyncLoader { key -> serviceProvider.guildService.getGuildMembers(key) })
 
     val guildRoles = Caffeine.newBuilder()
         .expireAfterAccess(5, TimeUnit.MINUTES)
         .maximumSize(dataCacheProperties.guildRolesCacheMaxSize)
-        .buildAsync<Long, Array<GuildRole>>()
+        .buildAsync<Long, Array<GuildRole>>(ApiAsyncLoader { key -> serviceProvider.guildService.getGuildRoles(key) })
 
     val guildEmojiCache = Caffeine.newBuilder()
         .expireAfterAccess(5, TimeUnit.MINUTES)
         .maximumSize(dataCacheProperties.emojiCacheMaxSize)
-        .buildAsync<Long, DiscordEmoji>()
+        .buildAsync<CombinedId, DiscordEmoji>(ApiAsyncLoader { keys ->
+            serviceProvider.emojiService.getGuildEmoji(
+                keys.first,
+                keys.second
+            )
+        })
 
     val messageCache = Caffeine.newBuilder()
         .expireAfterAccess(5, TimeUnit.MINUTES)
         .maximumSize(dataCacheProperties.messageCacheMaxSize)
-        .buildAsync<Long, DiscordMessage>()
+        .buildAsync<CombinedId, DiscordMessage>(ApiAsyncLoader { keys ->
+            serviceProvider.channelService.getChannelMessage(
+                keys.first,
+                keys.second
+            )
+        })
 
-    suspend fun getMessage(channelId: Long, messageId: Long) =
-        messageCache.getSuspending<Long, DiscordMessage>(messageId) { _ ->
-            serviceProvider.channelService.getChannelMessage(channelId, messageId).also {
-                cacheMessage(it)
-            }
-        }
-
-    suspend fun getGuildUsers(guildId: Long) =
-        guildUsers.getSuspending<Long, Array<GuildUser>>(guildId) { id ->
-            serviceProvider.guildService.getGuildMembers(id).toTypedArray().also {
-                cacheGuildUsers(id, it)
-            }
-        }
-
-    suspend fun getGuildRoles(guildId: Long) =
-        guildRoles.getSuspending<Long, Array<GuildRole>>(guildId) { id ->
-            serviceProvider.guildService.getGuildRoles(id).toTypedArray().also {
-                cacheGuildRoles(id, it)
-            }
-        }
-
-    suspend fun enrich(message: DiscordMessage): DiscordMessage {
+    fun enrich(message: DiscordMessage): DiscordMessage {
         var enrichedMessage = message
         if (message.guildId != null) {
-            val users = getGuildUsers(message.guildId)
+            val users = guildUsers.get(message.guildId).getNow(arrayOf())
             val user = users.firstOrNull { it.discordUser?.id == message.author.id }
             enrichedMessage = if (user?.discordUser != null) {
                 enrichedMessage.copy(author = user.discordUser, authorGuildUser = user)
@@ -88,8 +92,8 @@ internal class DataCache(
     }
 
     suspend fun updateGuildUsers(guildId: Long) {
-        val users = getGuildUsers(guildId)
-        val roles = getGuildRoles(guildId)
+        val users = guildUsers.getSuspending(guildId)
+        val roles = guildRoles.getSuspending(guildId)
         users.forEach { user -> user.update(roles) }
     }
 
@@ -99,13 +103,12 @@ internal class DataCache(
     }
 
     suspend fun cacheGuild(guild: Guild) {
-        guilds.put(guild.id, CompletableFuture.completedFuture(guild))
         guild.members?.let {
             cacheGuildUsers(guild.id, it)
         }
         cacheGuildRoles(guild.id, guild.roles)
         guild.emojis.filter { it.id != null }.forEach {
-            cacheEmoji(it)
+            cacheEmoji(guild.id, it)
         }
 
         updateGuildUsers(guild.id)
@@ -119,33 +122,11 @@ internal class DataCache(
         guildRoles.put(guildId, CompletableFuture.completedFuture(roles))
     }
 
-    fun cacheEmoji(emoji: DiscordEmoji) {
-        guildEmojiCache.put(emoji.id!!, CompletableFuture.completedFuture(emoji))
+    fun cacheEmoji(guildId: Long, emoji: DiscordEmoji) {
+        guildEmojiCache.put(CombinedId(guildId, emoji.id!!), CompletableFuture.completedFuture(emoji))
     }
 
     fun cacheMessage(message: DiscordMessage) {
-        messageCache.put(message.id, CompletableFuture.completedFuture(message))
-    }
-
-    /**
-     * Helper function to get from cache in suspending fashion using a suspending call fallback
-     */
-    suspend fun <K : Any, V> AsyncCache<K, V>.getSuspending(key: K, mapper: suspend (key: K) -> V): V {
-        val outerContext = coroutineContext // Get the current context
-        /**
-         *  The context used to call loadValue is composed of three things:
-         *
-         *  * The original context that was used to call getSuspending
-         *  * A new Job(), which overrides the job in the outer context. This is necessary to ensure that errors raised in loadValue don't propagate immediately but are instead captured in the CompletableFuture so that the cache can respond to them appropriately.
-         *  * The executor, so that the configuration of the cache with regard to threads is still respected.
-         *
-         *  This does mean that the context is sensitive to where the get was called from, which might not be the right behaviour if the cache is shared by different parts of the application.
-         */
-        return get(key) { k: K, executor: Executor ->
-            val innerContext = outerContext + Job() + executor.asCoroutineDispatcher()
-            CoroutineScope(innerContext).async {
-                mapper(k)
-            }.asCompletableFuture()
-        }.await()
+        messageCache.put(CombinedId(message.channelId, message.id), CompletableFuture.completedFuture(message))
     }
 }

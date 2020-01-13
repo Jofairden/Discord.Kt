@@ -60,7 +60,7 @@ interface GuildService {
     @GET("guilds/{guild-id}/members")
     suspend fun getGuildMembers(
         @Path("guild-id") guildId: Long
-    ): ArrayList<GuildUser> //Guild Member
+    ): Array<GuildUser> //Guild Member
 
     @PUT("guilds/{guild-id}/members/{user-id}")
     suspend fun addGuildMember(
@@ -132,7 +132,7 @@ interface GuildService {
     @GET("guilds/{guild-id}/roles")
     suspend fun getGuildRoles(
         @Path("guild-id") guildId: Long
-    ): ArrayList<GuildRole>
+    ): Array<GuildRole>
 
     //MANAGE_ROLES
     @POST("guilds/{guild-id}/roles")

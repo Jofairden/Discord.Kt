@@ -16,7 +16,7 @@ data class GuildUser(
     val nickname: String?,
 
     @JsonProperty("roles")
-    val roleIds: Array<Long>,
+    private val _roleIds: Array<Long>?,
 
     @JsonProperty("joined_at")
     val joinedAt: Date,
@@ -33,4 +33,14 @@ data class GuildUser(
     @JsonIgnore
     var roles = listOf<GuildRole>()
         internal set
+
+    @JsonIgnore
+    val roleIds: Array<Long> = _roleIds ?: arrayOf()
+
+    // fun setRoleIds(roleIds: Array<Long>?) {
+    //
+    // }
+
+    // @JsonProperty("roles")
+    // var roleIds: Array<Long>
 }

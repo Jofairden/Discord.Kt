@@ -1,16 +1,47 @@
 # Discord.Kt [![Discord](https://img.shields.io/discord/663780943609331733.svg?style=flat-square)](https://discord.gg/RkBVCmy)
 A Discord library written in Kotlin for Kotlin. The purpose of the library is to be easily able to create a Discord bot in Kotlin with minimal amount of code using Kotlin DSL.
 
+## Support status
+This lib will likely only ever work on a JVM
+*   JVM: ✓
+*   JS: ❌
+*   Native: ❌
+
 # How to use
 The library is not yet released.
 To use it you must pull the repository and locally install it.
 
 # Basic example
+Ping-Pong
 ```kotlin
 fun main() {
     DiscordClient.buildAndRun(getBotToken()) {
         onMessageCreate { msg ->
-            if (msg.content ?: "" == ".ping") {
+            if (msg.content == ".ping") {
+                with(msg) {
+                    reply("pong!")
+                }
+            }
+        }
+    }
+}
+```
+Ping-Pong with message update
+```kotlin
+fun main() {
+    DiscordClient.buildAndRun(getBotToken()) {
+        onMessageCreate { msg ->
+            if (msg.author.id == botUser.id
+                && msg.content == "pong!"
+            ) {
+                with(msg) {
+                    edit(
+                        EditMessageBody(
+                            "pong! (${Date().time - msg.timestamp.time} ms)"
+                        )
+                    )
+                }
+            } else if (msg.content == ".ping") {
                 with(msg) {
                     reply("pong!")
                 }
@@ -24,6 +55,8 @@ fun main() {
 Current lib features: (list incomplete)
 - [x] Connect with Discord
 - [x] Reply to messages
+- [x] Send embeds
+- [x] Hook into any discord event (excluding voice events)
 - [ ] Change bot details (name, presence etc)
 
 # Dev task list
@@ -39,7 +72,7 @@ List of things completed, and things yet to be done.
 - [x] WebSocket failure reporter
 - [ ] Required permission checking (high prio)
 - [x] Retrofit services for all resources
-- [ ] Storing resources (cache) (high prio)
+- [x] Storing resources (cache) (high prio) (not final)
 - [x] Model classes for Guild, User, Role and all other associated resources
 - [ ] Command module registration
 

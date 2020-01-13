@@ -11,7 +11,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
 
-internal class ApiServiceProvider(
+class ApiServiceProvider(
     /**
      * The client should be injected by the internal discord client
      */

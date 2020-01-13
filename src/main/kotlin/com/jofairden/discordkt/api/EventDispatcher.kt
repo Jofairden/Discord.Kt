@@ -2,9 +2,12 @@ package com.jofairden.discordkt.api
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ObjectNode
+import com.jofairden.discordkt.api.cache.CombinedId
+import com.jofairden.discordkt.api.cache.getSuspending
 import com.jofairden.discordkt.model.context.event.GuildMemberAddEventContext
 import com.jofairden.discordkt.model.context.event.ReadyEventContext
 import com.jofairden.discordkt.model.discord.guild.Guild
+import com.jofairden.discordkt.model.discord.guild.GuildUser
 import com.jofairden.discordkt.model.discord.guild.UnavailableGuild
 import com.jofairden.discordkt.model.discord.message.DiscordMessage
 import com.jofairden.discordkt.model.discord.message.DiscordMessageUpdate
@@ -33,8 +36,8 @@ internal class EventDispatcher(
                     botUser = ctx.botUser
 
                     ctx.guilds.forEach { g ->
-                        val guild = serviceProvider.guildService.getGuild(g.id)
-                        dataCache.cacheGuild(guild)
+                        val guild = dataCache.guilds.getSuspending(g.id)
+                        logger.info { "Loaded guild ${guild.id}" }
                     }
                     readyEventHandlers.forEach { it(ctx) }
                 }
@@ -85,8 +88,9 @@ internal class EventDispatcher(
                 GatewayEvent.GuildMemberAdd -> {
                     val guildId = node.get("guild_id").asLong()
                     // Strip extra guild_id field and append to ctx (WHY DISCORD?)
-                    val ctxNode = parseNode<GuildMemberAddEventContext>((node as ObjectNode).remove("guild_id")).also {
-                        it.guildId = guildId
+                    (node as ObjectNode).remove("guild_id")
+                    val ctxNode = parseNode<GuildUser>(node).run {
+                        GuildMemberAddEventContext(this, dataCache).also { it.guildId = guildId }
                     }
                     guildMemberAddEventBlocks.forEach { it(ctxNode) }
                 }
@@ -117,7 +121,7 @@ internal class EventDispatcher(
                 }
                 GatewayEvent.MessageUpdate -> {
                     val update = parseNode<DiscordMessageUpdate>(node)
-                    var message = dataCache.getMessage(update.channelId, update.id)
+                    var message = dataCache.messageCache.getSuspending(CombinedId(update.channelId, update.id))
                     message = message.copyFromMessageUpdate(update)
                     message = dataCache.enrich(message)
                     dataCache.cacheMessage(message)

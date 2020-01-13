@@ -1,6 +1,7 @@
 package com.jofairden.discordkt.example
 
 import com.jofairden.discordkt.api.DiscordClient
+import com.jofairden.discordkt.dsl.onGuildMemberAdd
 import com.jofairden.discordkt.dsl.onMessageCreate
 import com.jofairden.discordkt.model.discord.message.embed.EmbedAuthor
 import com.jofairden.discordkt.model.discord.message.embed.EmbedField
@@ -8,6 +9,7 @@ import com.jofairden.discordkt.model.discord.message.embed.EmbedFooter
 import com.jofairden.discordkt.model.discord.message.embed.EmbedThumbnail
 import com.jofairden.discordkt.model.discord.message.embed.MessageEmbed
 import com.jofairden.discordkt.model.request.EditMessageBody
+import mu.KotlinLogging
 import java.io.File
 import java.util.Date
 
@@ -15,7 +17,13 @@ class ExampleBot
 
 // Run this method
 fun main() {
+    val logger = KotlinLogging.logger {}
+
     DiscordClient.buildAndRun(getBotToken()) {
+        onGuildMemberAdd {
+            val g = it.guild.await()
+            logger.info { "${it.user.discordUser?.username} joined guild ${g.name}" }
+        }
         onMessageCreate { msg ->
             if (msg.author.id == botUser.id
                 && msg.content == "pong!"
