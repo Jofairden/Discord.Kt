@@ -46,7 +46,6 @@ class DiscordClient {
         internalClient.connect()
     }
 
-    //MutableList<suspend (ctx : T) -> Unit> where T : EventContext
     internal val readyEventHandlers: MutableList<ReadyEventBlock> = arrayListOf()
     internal val resumedEventBlocks: MutableList<NoArgsEventBlock> = arrayListOf()
     internal val invalidSessionEventBlocks: MutableList<InvalidSessionEventBlock> = arrayListOf()

@@ -91,7 +91,9 @@ class DataCache(
         .expireAfterAccess(5, TimeUnit.MINUTES)
         .maximumSize(dataCacheProperties.channelCacheMaxSize)
         .buildAsync<Long, DiscordChannel>(ApiAsyncLoader { key ->
-            serviceProvider.channelService.getChannel(key)
+            serviceProvider.channelService.getChannel(key).apply {
+                this.serviceProvider = this@DataCache.serviceProvider
+            }
         })
 
     val messageCache = Caffeine.newBuilder()
@@ -175,7 +177,9 @@ class DataCache(
     }
 
     fun cacheChannel(channel: DiscordChannel) {
-        channelCache.put(channel.id, CompletableFuture.completedFuture(channel))
+        channelCache.put(channel.id, CompletableFuture.completedFuture(channel.apply {
+            this.serviceProvider = this@DataCache.serviceProvider
+        }))
     }
 
     fun cacheMessage(message: DiscordMessage) {

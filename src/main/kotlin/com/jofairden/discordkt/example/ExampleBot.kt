@@ -4,6 +4,7 @@ import com.jofairden.discordkt.api.DiscordClient
 import com.jofairden.discordkt.dsl.onChannelCreate
 import com.jofairden.discordkt.dsl.onGuildMemberAdd
 import com.jofairden.discordkt.dsl.onMessageCreate
+import com.jofairden.discordkt.dsl.onMessageReactionAdd
 import com.jofairden.discordkt.model.discord.message.embed.EmbedAuthor
 import com.jofairden.discordkt.model.discord.message.embed.EmbedField
 import com.jofairden.discordkt.model.discord.message.embed.EmbedFooter
@@ -21,6 +22,13 @@ fun main() {
     val logger = KotlinLogging.logger {}
 
     DiscordClient.buildAndRun(getBotToken()) {
+
+        onMessageReactionAdd {
+            val channel = channel.await()
+            if (this.emoji.name == "\uD83D\uDC4C") {
+                channel.sendMessage("I saw you looking")
+            }
+        }
         onChannelCreate {
             if (channel.guildId != null) {
                 sendMessage("Hey, a new channel?")
