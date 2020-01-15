@@ -6,11 +6,13 @@ import com.jofairden.discordkt.model.discord.message.embed.MessageEmbed
 import com.jofairden.discordkt.model.request.CreateMessageBody
 
 data class ChannelCreateEventContext(
-    private val client: DiscordClient,
     val channel: DiscordChannel
-) {
+) : IEventContext {
+
+    override lateinit var discordClient: DiscordClient
+
     suspend fun sendMessage(text: String) {
-        client.serviceProvider.channelService.postChannelMessage(
+        discordClient.serviceProvider.channelService.postChannelMessage(
             channel.id,
             CreateMessageBody(text)
         )

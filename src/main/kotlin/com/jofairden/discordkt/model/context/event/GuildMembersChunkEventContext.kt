@@ -1,6 +1,7 @@
 package com.jofairden.discordkt.model.context.event
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.jofairden.discordkt.api.DiscordClient
 import com.jofairden.discordkt.model.discord.guild.GuildUser
 import com.jofairden.discordkt.model.discord.user.DiscordUserPresence
 
@@ -17,4 +18,7 @@ data class GuildMembersChunkEventContext(
 
     @JsonProperty("presences")
     val presences: Array<DiscordUserPresence>
-)
+) : IEventContext {
+    override lateinit var discordClient: DiscordClient
+}
+

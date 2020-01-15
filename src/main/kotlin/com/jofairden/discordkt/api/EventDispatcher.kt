@@ -11,6 +11,7 @@ import com.jofairden.discordkt.model.context.event.GuildMemberUpdateEventContext
 import com.jofairden.discordkt.model.context.event.GuildMembersChunkEventContext
 import com.jofairden.discordkt.model.context.event.GuildRoleEventContext
 import com.jofairden.discordkt.model.context.event.GuildRoleIdEventContext
+import com.jofairden.discordkt.model.context.event.IEventContext
 import com.jofairden.discordkt.model.context.event.MessageDeleteBulkEventContext
 import com.jofairden.discordkt.model.context.event.MessageDeleteEventContext
 import com.jofairden.discordkt.model.context.event.MessageReactionAddEventContext
@@ -33,7 +34,11 @@ internal class EventDispatcher(
     private val logger = KotlinLogging.logger {}
 
     private inline fun <reified T> parseNode(node: JsonNode): T =
-        JsonUtil.Mapper.treeToValue<T>(node, T::class.java)
+        JsonUtil.Mapper.treeToValue<T>(node, T::class.java).also {
+            if (it is IEventContext) {
+                it.discordClient = client
+            }
+        }
 
     suspend fun dispatch(event: GatewayEvent, node: JsonNode) {
         logger.info { "Event being dispatched: ${event.name}" }
@@ -64,7 +69,7 @@ internal class EventDispatcher(
                 GatewayEvent.ChannelCreate -> {
                     val channel = parseNode<DiscordChannel>(node)
                     dataCache.cacheChannel(channel)
-                    channelCreateEventBlocks.forEach { it(ChannelCreateEventContext(client, channel)) }
+                    channelCreateEventBlocks.forEach { it(ChannelCreateEventContext(channel)) }
                 }
                 GatewayEvent.ChannelUpdate -> {
                     val channel = parseNode<DiscordChannel>(node)
@@ -108,10 +113,9 @@ internal class EventDispatcher(
                     val guildId = node.get("guild_id").asLong()
                     // Strip extra guild_id field and append to ctx (WHY DISCORD?)
                     (node as ObjectNode).remove("guild_id")
-                    val ctxNode = parseNode<GuildUser>(node).run {
-                        GuildMemberAddEventContext(this, dataCache).also { it.guildId = guildId }
-                    }
-                    guildMemberAddEventBlocks.forEach { it(ctxNode) }
+                    val user = parseNode<GuildUser>(node)
+                    val ctx = GuildMemberAddEventContext(user).also { it.guildId = guildId }
+                    guildMemberAddEventBlocks.forEach { it(ctx) }
                 }
                 GatewayEvent.GuildMemberRemove -> {
                     val ctx = parseNode<GuildMemberRemoveEventContext>(node)

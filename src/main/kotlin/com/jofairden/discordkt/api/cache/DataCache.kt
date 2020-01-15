@@ -68,7 +68,9 @@ class DataCache(
     val userCache = Caffeine.newBuilder()
         .expireAfterAccess(5, TimeUnit.MINUTES)
         .maximumSize(dataCacheProperties.userCacheMaxSize)
-        .buildAsync<Long, DiscordUser>()
+        .buildAsync<Long, DiscordUser>(ApiAsyncLoader { key ->
+            serviceProvider.userService.getUser(key)
+        })
 
     val guildRoleCache = Caffeine.newBuilder()
         .expireAfterAccess(5, TimeUnit.MINUTES)

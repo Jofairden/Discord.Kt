@@ -3,6 +3,7 @@ package com.jofairden.discordkt.model.context.event
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.JsonNode
+import com.jofairden.discordkt.api.DiscordClient
 import com.jofairden.discordkt.model.discord.guild.UnavailableGuild
 import com.jofairden.discordkt.model.discord.user.DiscordUser
 
@@ -40,4 +41,7 @@ data class ReadyEventContext(
     @JsonProperty("_trace")
     @JsonIgnore
     val trace: JsonNode
-)
+) : IEventContext {
+    override lateinit var discordClient: DiscordClient
+}
+

@@ -1,6 +1,7 @@
 package com.jofairden.discordkt.model.context.event
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.jofairden.discordkt.api.DiscordClient
 import com.jofairden.discordkt.model.discord.user.DiscordUser
 
 data class GuildMemberUpdateEventContext(
@@ -15,7 +16,9 @@ data class GuildMemberUpdateEventContext(
 
     @JsonProperty("nick")
     val nickname: String?
-) {
+) : IEventContext {
+
+    override lateinit var discordClient: DiscordClient
 
     val roleIds by lazy { _roleIds ?: arrayOf() }
 }
