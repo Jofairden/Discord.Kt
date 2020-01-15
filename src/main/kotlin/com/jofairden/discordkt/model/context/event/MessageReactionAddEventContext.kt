@@ -20,7 +20,6 @@ data class MessageReactionAddEventContext(
     @JsonProperty("member")
     val user: GuildUser?,
 
-    // TODO partial?  https://discordapp.com/developers/docs/topics/gateway#message-reaction-add
     @JsonProperty("emoji")
     val emoji: DiscordEmoji
 )

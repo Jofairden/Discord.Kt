@@ -42,7 +42,7 @@ interface ChannelService {
     ): Array<DiscordMessage> // Message
 
     // Requires READ_MESSAGE_HISTORY perm
-    @GET("channels/{id}/messages{message-id}")
+    @GET("channels/{channel-id}/messages/{message-id}")
     suspend fun getChannelMessage(
         @Path("channel-id") id: Long,
         @Path("message-id") messageId: Long

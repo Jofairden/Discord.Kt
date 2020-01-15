@@ -16,8 +16,7 @@ data class MessageReactionRemoveEventContext(
     @JsonProperty("guild_id")
     val guildId: Long?,
 
-    // TODO partial?
     @JsonProperty("emoji")
-    val emoji: DiscordEmoji?
+    val emoji: DiscordEmoji
 )
 

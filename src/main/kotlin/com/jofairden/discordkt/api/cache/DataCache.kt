@@ -5,17 +5,23 @@ import com.github.benmanes.caffeine.cache.Caffeine
 import com.jofairden.discordkt.api.ApiServiceProvider
 import com.jofairden.discordkt.model.api.DataCacheProperties
 import com.jofairden.discordkt.model.context.event.GuildMemberUpdateEventContext
+import com.jofairden.discordkt.model.context.event.MessageReactionAddEventContext
+import com.jofairden.discordkt.model.context.event.MessageReactionRemoveAllEventContext
+import com.jofairden.discordkt.model.context.event.MessageReactionRemoveEventContext
 import com.jofairden.discordkt.model.discord.channel.DiscordChannel
 import com.jofairden.discordkt.model.discord.emoji.DiscordEmoji
+import com.jofairden.discordkt.model.discord.emoji.UnicodeEmoji
 import com.jofairden.discordkt.model.discord.guild.Guild
 import com.jofairden.discordkt.model.discord.guild.GuildUser
 import com.jofairden.discordkt.model.discord.message.DiscordMessage
+import com.jofairden.discordkt.model.discord.message.MessageReaction
 import com.jofairden.discordkt.model.discord.role.GuildRole
 import com.jofairden.discordkt.model.discord.user.DiscordUser
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.future.await
 import kotlinx.coroutines.withContext
+import mu.KotlinLogging
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.coroutineContext
@@ -37,6 +43,8 @@ class DataCache(
     dataCacheProperties: DataCacheProperties,
     private val serviceProvider: ApiServiceProvider
 ) {
+
+    private val logger = KotlinLogging.logger {}
 
     val guildCache = Caffeine.newBuilder()
         .expireAfterAccess(5, TimeUnit.MINUTES)
@@ -209,5 +217,90 @@ class DataCache(
             val newUser = user.copy(_roleIds = matchingRoles.map { it.id }.toTypedArray()).update(roles)
             cacheGuildUser(ctx.guildId, newUser)
         }
+    }
+
+    suspend fun messageReactionAdd(ctx: MessageReactionAddEventContext) {
+        val combinedId = CombinedId(ctx.channelId, ctx.messageId)
+        if (!messageCache.asMap().containsKey(combinedId)) return
+
+        val msg = messageCache.getSuspending(combinedId)
+        val emoji = if (ctx.emoji.id == null) UnicodeEmoji(ctx.emoji.id, ctx.emoji.name)
+        else ctx.emoji
+
+        val reaction = if (emoji.id == null) msg.reactions?.find { it.emoji.name == emoji.name }
+        else msg.reactions?.find { it.emoji.id == emoji.id }
+
+        if (reaction != null) {
+            val reactions = msg.reactions!!.toMutableList()
+            reactions.remove(reaction)
+            reactions.add(
+                MessageReaction(
+                    reaction.count + 1,
+                    reaction.me,
+                    reaction.emoji
+                )
+            )
+            cacheMessage(
+                msg.copy(reactions = reactions.toTypedArray())
+            )
+        } else {
+            cacheMessage(
+                msg.copy(
+                    reactions = (msg.reactions ?: arrayOf()).toMutableList().apply {
+                        add(
+                            MessageReaction(
+                                count = 1,
+                                me = false,// TODO
+                                emoji = emoji
+                            )
+                        )
+                    }.toTypedArray()
+                )
+            )
+        }
+    }
+
+    suspend fun messageReactionRemove(ctx: MessageReactionRemoveEventContext) {
+        val combinedId = CombinedId(ctx.channelId, ctx.messageId)
+        if (!messageCache.asMap().containsKey(combinedId)) return
+
+        val msg = messageCache.getSuspending(combinedId)
+        val emoji = if (ctx.emoji.id == null) UnicodeEmoji(ctx.emoji.id, ctx.emoji.name)
+        else ctx.emoji
+
+        val reaction = if (emoji.id == null) msg.reactions?.find { it.emoji.name == emoji.name }
+        else msg.reactions?.find { it.emoji.id == emoji.id }
+
+        if (reaction != null) {
+            val reactions = msg.reactions!!.toMutableList()
+            reactions.remove(reaction)
+            val newCount = reaction.count - 1
+            if (newCount > 0) {
+                reactions.add(
+                    MessageReaction(
+                        newCount,
+                        reaction.me,
+                        reaction.emoji
+                    )
+                )
+            }
+            cacheMessage(
+                msg.copy(reactions = reactions.toTypedArray())
+            )
+        } else {
+            logger.warn { "messageReactionRemove could not find reaction object even though reaction was removed" }
+        }
+    }
+
+    suspend fun messageReactionRemoveAll(ctx: MessageReactionRemoveAllEventContext) {
+        val combinedId = CombinedId(ctx.channelId, ctx.messageId)
+        if (!messageCache.asMap().containsKey(combinedId)) return
+
+        val msg = messageCache.getSuspending(combinedId)
+        cacheMessage(
+            msg.copy(
+                reactions = arrayOf()
+            )
+        )
     }
 }

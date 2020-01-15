@@ -5,9 +5,9 @@ import com.fasterxml.jackson.databind.JsonNode
 
 data class DiscordEmoji(
     @JsonProperty("id")
-    val id: Long?,
+    override val id: Long?,
     @JsonProperty("name")
-    val name: String?,
+    override val name: String?,
     @JsonProperty("roles")
     val roles: Array<JsonNode>?,
     @JsonProperty("user")
@@ -18,4 +18,5 @@ data class DiscordEmoji(
     val managed: Boolean?,
     @JsonProperty("amimated")
     val animated: Boolean?
-)
+) : IEmoji
+

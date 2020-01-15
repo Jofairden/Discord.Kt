@@ -58,7 +58,7 @@ data class DiscordMessage(
     val embeds: Array<JsonNode>,
 
     @JsonProperty("reactions")
-    val reactions: Array<JsonNode>?,
+    val reactions: Array<MessageReaction>?,
 
     @JsonProperty("nonce")
     val nonce: String?,

@@ -13,6 +13,9 @@ import com.jofairden.discordkt.model.context.event.GuildRoleEventContext
 import com.jofairden.discordkt.model.context.event.GuildRoleIdEventContext
 import com.jofairden.discordkt.model.context.event.MessageDeleteBulkEventContext
 import com.jofairden.discordkt.model.context.event.MessageDeleteEventContext
+import com.jofairden.discordkt.model.context.event.MessageReactionAddEventContext
+import com.jofairden.discordkt.model.context.event.MessageReactionRemoveAllEventContext
+import com.jofairden.discordkt.model.context.event.MessageReactionRemoveEventContext
 import com.jofairden.discordkt.model.context.event.ReadyEventContext
 import com.jofairden.discordkt.model.discord.channel.DiscordChannel
 import com.jofairden.discordkt.model.discord.guild.Guild
@@ -124,7 +127,7 @@ internal class EventDispatcher(
                     // TODO store info
                     val ctx = parseNode<GuildMembersChunkEventContext>(node)
                     if (ctx.notFound == false) {
-                        guildMembersChunkEventBlocks.forEach { it(parseNode(node)) }
+                        guildMembersChunkEventBlocks.forEach { it(ctx) }
                     }
                 }
                 GatewayEvent.GuildRoleCreate -> {
@@ -179,13 +182,19 @@ internal class EventDispatcher(
                     messageDeleteBulkEventBlocks.forEach { it(ctx) }
                 }
                 GatewayEvent.MessageReactionAdd -> {
-                    messageReactionAddEventBlocks.forEach { it(parseNode(node)) }
+                    val ctx = parseNode<MessageReactionAddEventContext>(node)
+                    dataCache.messageReactionAdd(ctx)
+                    messageReactionAddEventBlocks.forEach { it(ctx) }
                 }
                 GatewayEvent.MessageReactionRemove -> {
-                    messageReactionRemoveEventBlocks.forEach { it(parseNode(node)) }
+                    val ctx = parseNode<MessageReactionRemoveEventContext>(node)
+                    dataCache.messageReactionRemove(ctx)
+                    messageReactionRemoveEventBlocks.forEach { it(ctx) }
                 }
                 GatewayEvent.MessageReactionRemoveAll -> {
-                    messageReactionRemoveAllEventBlocks.forEach { it(parseNode(node)) }
+                    val ctx = parseNode<MessageReactionRemoveAllEventContext>(node)
+                    dataCache.messageReactionRemoveAll(ctx)
+                    messageReactionRemoveAllEventBlocks.forEach { it(ctx) }
                 }
                 GatewayEvent.PresenceUpdate -> {
                     // TODO
