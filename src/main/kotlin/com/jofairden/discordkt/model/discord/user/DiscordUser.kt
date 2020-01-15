@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 class DiscordUser(
 
     @JsonProperty("id")
-    val id: String,
+    val id: Long,
 
     @JsonProperty("username")
     val username: String,

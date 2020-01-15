@@ -6,6 +6,13 @@ import com.jofairden.discordkt.api.cache.CombinedId
 import com.jofairden.discordkt.api.cache.getSuspending
 import com.jofairden.discordkt.model.context.event.ChannelCreateEventContext
 import com.jofairden.discordkt.model.context.event.GuildMemberAddEventContext
+import com.jofairden.discordkt.model.context.event.GuildMemberRemoveEventContext
+import com.jofairden.discordkt.model.context.event.GuildMemberUpdateEventContext
+import com.jofairden.discordkt.model.context.event.GuildMembersChunkEventContext
+import com.jofairden.discordkt.model.context.event.GuildRoleEventContext
+import com.jofairden.discordkt.model.context.event.GuildRoleIdEventContext
+import com.jofairden.discordkt.model.context.event.MessageDeleteBulkEventContext
+import com.jofairden.discordkt.model.context.event.MessageDeleteEventContext
 import com.jofairden.discordkt.model.context.event.ReadyEventContext
 import com.jofairden.discordkt.model.discord.channel.DiscordChannel
 import com.jofairden.discordkt.model.discord.guild.Guild
@@ -62,7 +69,9 @@ internal class EventDispatcher(
                     channelUpdateEventBlocks.forEach { it(channel) }
                 }
                 GatewayEvent.ChannelDelete -> {
-                    channelDeleteEventBlocks.forEach { it(parseNode(node)) }
+                    val ctx = parseNode<DiscordChannel>(node)
+                    dataCache.channelCache.synchronous().invalidate(ctx.id)
+                    channelDeleteEventBlocks.forEach { it(ctx) }
                 }
                 GatewayEvent.ChannelPinsUpdate -> {
                     channelPinsUpdateEventBlocks.forEach { it(parseNode(node)) }
@@ -77,6 +86,7 @@ internal class EventDispatcher(
                 }
                 GatewayEvent.GuildDelete -> {
                     val ctx = parseNode<UnavailableGuild>(node)
+                    dataCache.guildCache.synchronous().invalidate(ctx.id)
                     guildDeleteEventBlocks.forEach { it(ctx, !ctx.unavailable) }
                 }
                 GatewayEvent.GuildBanAdd -> {
@@ -101,23 +111,36 @@ internal class EventDispatcher(
                     guildMemberAddEventBlocks.forEach { it(ctxNode) }
                 }
                 GatewayEvent.GuildMemberRemove -> {
-                    guildMemberRemoveEventBlocks.forEach { it(parseNode(node)) }
+                    val ctx = parseNode<GuildMemberRemoveEventContext>(node)
+                    dataCache.userCache.synchronous().invalidate(ctx.user.id)
+                    guildMemberRemoveEventBlocks.forEach { it(ctx) }
                 }
                 GatewayEvent.GuildMemberUpdate -> {
-                    guildMemberUpdateEventBlocks.forEach { it(parseNode(node)) }
+                    val ctx = parseNode<GuildMemberUpdateEventContext>(node)
+                    dataCache.guildMemberUpdate(ctx)
+                    guildMemberUpdateEventBlocks.forEach { it(ctx) }
                 }
                 GatewayEvent.GuildMembersChunk -> {
                     // TODO store info
-                    guildMembersChunkEventBlocks.forEach { it(parseNode(node)) }
+                    val ctx = parseNode<GuildMembersChunkEventContext>(node)
+                    if (ctx.notFound == false) {
+                        guildMembersChunkEventBlocks.forEach { it(parseNode(node)) }
+                    }
                 }
                 GatewayEvent.GuildRoleCreate -> {
-                    guildRoleCreateEventBlocks.forEach { it(parseNode(node)) }
+                    val ctx = parseNode<GuildRoleEventContext>(node)
+                    dataCache.cacheGuildRole(ctx.guildId, ctx.role)
+                    guildRoleCreateEventBlocks.forEach { it(ctx) }
                 }
                 GatewayEvent.GuildRoleUpdate -> {
-                    guildRoleUpdateEventBlocks.forEach { it(parseNode(node)) }
+                    val ctx = parseNode<GuildRoleEventContext>(node)
+                    dataCache.cacheGuildRole(ctx.guildId, ctx.role)
+                    guildRoleUpdateEventBlocks.forEach { it(ctx) }
                 }
                 GatewayEvent.GuildRoleDelete -> {
-                    guildRoleDeleteEventBlocks.forEach { it(parseNode(node)) }
+                    val ctx = parseNode<GuildRoleIdEventContext>(node)
+                    dataCache.removeGuildRole(ctx.guildId, ctx.roleId)
+                    guildRoleDeleteEventBlocks.forEach { it(ctx) }
                 }
                 GatewayEvent.MessageCreate -> {
                     var message = parseNode<DiscordMessage>(node)
@@ -134,10 +157,26 @@ internal class EventDispatcher(
                     messageUpdateEventBlocks.forEach { it(message) }
                 }
                 GatewayEvent.MessageDelete -> {
-                    messageDeleteEventBlocks.forEach { it(parseNode(node)) }
+                    val ctx = parseNode<MessageDeleteEventContext>(node)
+                    dataCache.messageCache.synchronous().invalidate(
+                        CombinedId(
+                            ctx.channelId,
+                            ctx.messageId
+                        )
+                    )
+                    messageDeleteEventBlocks.forEach { it(ctx) }
                 }
                 GatewayEvent.MessageDeleteBulk -> {
-                    messageDeleteBulkEventBlocks.forEach { it(parseNode(node)) }
+                    val ctx = parseNode<MessageDeleteBulkEventContext>(node)
+                    ctx.messageIds.forEach { msgId ->
+                        dataCache.messageCache.synchronous().invalidate(
+                            CombinedId(
+                                ctx.channelId,
+                                msgId
+                            )
+                        )
+                    }
+                    messageDeleteBulkEventBlocks.forEach { it(ctx) }
                 }
                 GatewayEvent.MessageReactionAdd -> {
                     messageReactionAddEventBlocks.forEach { it(parseNode(node)) }

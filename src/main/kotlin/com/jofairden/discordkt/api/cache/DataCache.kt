@@ -4,12 +4,14 @@ import com.github.benmanes.caffeine.cache.AsyncLoadingCache
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.jofairden.discordkt.api.ApiServiceProvider
 import com.jofairden.discordkt.model.api.DataCacheProperties
+import com.jofairden.discordkt.model.context.event.GuildMemberUpdateEventContext
 import com.jofairden.discordkt.model.discord.channel.DiscordChannel
 import com.jofairden.discordkt.model.discord.emoji.DiscordEmoji
 import com.jofairden.discordkt.model.discord.guild.Guild
 import com.jofairden.discordkt.model.discord.guild.GuildUser
 import com.jofairden.discordkt.model.discord.message.DiscordMessage
 import com.jofairden.discordkt.model.discord.role.GuildRole
+import com.jofairden.discordkt.model.discord.user.DiscordUser
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.future.await
@@ -49,13 +51,16 @@ class DataCache(
         .expireAfterAccess(5, TimeUnit.MINUTES)
         .maximumSize(dataCacheProperties.guildUsersCacheMaxSize)
         .buildAsync<Long, Array<GuildUser>>(ApiAsyncLoader { key ->
-            serviceProvider.guildService.getGuildMembers(key).also {
-                val roles = guildRoleCache.getSuspending(key)
-                it.forEach { user ->
-                    user.update(roles)
-                }
-            }
+            val roles = guildRoleCache.getSuspending(key)
+            serviceProvider.guildService.getGuildMembers(key).map {
+                it.update(roles)
+            }.toTypedArray()
         })
+
+    val userCache = Caffeine.newBuilder()
+        .expireAfterAccess(5, TimeUnit.MINUTES)
+        .maximumSize(dataCacheProperties.userCacheMaxSize)
+        .buildAsync<Long, DiscordUser>()
 
     val guildRoleCache = Caffeine.newBuilder()
         .expireAfterAccess(5, TimeUnit.MINUTES)
@@ -110,12 +115,17 @@ class DataCache(
     suspend fun updateGuildUsers(guildId: Long) {
         val users = guildUserCache.getSuspending(guildId)
         val roles = guildRoleCache.getSuspending(guildId)
-        users.forEach { user -> user.update(roles) }
+        val newUsers = users.map { user -> user.update(roles) }
+        cacheGuildUsers(guildId, newUsers.toTypedArray())
     }
 
-    fun GuildUser.update(roles: Array<GuildRole>) {
+    fun GuildUser.update(roles: Array<GuildRole>): GuildUser {
         val matching = roles.asSequence().filter { role -> this.roleIds.contains(role.id) }
-        this.roles = matching.toList()
+        return this.copy(
+            _roleIds = matching.map { it.id }.toList().toTypedArray()
+        ).apply {
+            this.roles = matching.toList().toTypedArray()
+        }
     }
 
     suspend fun cacheGuild(guild: Guild) {
@@ -129,8 +139,17 @@ class DataCache(
         guild.channels?.forEach {
             cacheChannel(it)
         }
-
         updateGuildUsers(guild.id)
+    }
+
+    suspend fun cacheGuildUser(guildId: Long, guildUser: GuildUser) {
+        val users = guildUserCache.getSuspending(guildId).toMutableList()
+        val index = users.indexOfFirst { it.discordUser?.id == guildUser.discordUser?.id }
+        if (index != -1) {
+            users.removeAt(index)
+            users.add(guildUser)
+            guildUserCache.put(guildId, CompletableFuture.completedFuture(users.toTypedArray()))
+        }
     }
 
     fun cacheGuildUsers(guildId: Long, members: Array<GuildUser>) {
@@ -151,5 +170,44 @@ class DataCache(
 
     fun cacheMessage(message: DiscordMessage) {
         messageCache.put(CombinedId(message.channelId, message.id), CompletableFuture.completedFuture(message))
+    }
+
+    fun cacheUser(user: DiscordUser) {
+        userCache.put(user.id, CompletableFuture.completedFuture(user))
+    }
+
+    suspend fun cacheGuildRole(guildId: Long, guildRole: GuildRole) {
+        val roles = guildRoleCache.getSuspending(guildId)
+        if (!roles.contains(guildRole)) {
+            guildRoleCache.put(
+                guildId, CompletableFuture.completedFuture(
+                    roles.toMutableList().apply {
+                        add(guildRole)
+                    }.toTypedArray()
+                )
+            )
+        }
+    }
+
+    suspend fun removeGuildRole(guildId: Long, guildRoleId: Long) {
+        val roles = guildRoleCache.getSuspending(guildId)
+        val role = roles.find { it.id == guildRoleId }
+        if (role != null) {
+            cacheGuildRoles(guildId, roles.toMutableList().filter {
+                it.id != guildRoleId
+            }.toTypedArray())
+        }
+        updateGuildUsers(guildId)
+    }
+
+    suspend fun guildMemberUpdate(ctx: GuildMemberUpdateEventContext) {
+        cacheUser(ctx.user)
+        val users = guildUserCache.getSuspending(ctx.guildId)
+        val roles = guildRoleCache.getSuspending(ctx.guildId)
+        users.find { it.discordUser?.id == ctx.user.id }?.let { user ->
+            val matchingRoles = ctx.roleIds.mapNotNull { roleId -> roles.find { it.id == roleId } }.toTypedArray()
+            val newUser = user.copy(_roleIds = matchingRoles.map { it.id }.toTypedArray()).update(roles)
+            cacheGuildUser(ctx.guildId, newUser)
+        }
     }
 }

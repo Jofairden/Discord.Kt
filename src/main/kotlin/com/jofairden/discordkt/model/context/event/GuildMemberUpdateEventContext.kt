@@ -8,11 +8,14 @@ data class GuildMemberUpdateEventContext(
     val guildId: Long,
 
     @JsonProperty("roles")
-    val roleIds: Array<Long>,
+    val _roleIds: Array<Long>?,
 
     @JsonProperty("user")
     val user: DiscordUser,
 
     @JsonProperty("nick")
-    val nickname: String
-)
+    val nickname: String?
+) {
+
+    val roleIds by lazy { _roleIds ?: arrayOf() }
+}

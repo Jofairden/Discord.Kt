@@ -62,7 +62,7 @@ fun main() {
                                     roleField,
                                     inline = true
                                 ),
-                                EmbedField("ID", msg.author.id, inline = true)
+                                EmbedField("ID", msg.author.id.toString(), inline = true)
                             ),
                             footer = EmbedFooter("Requested on ${Date()}")
                         )

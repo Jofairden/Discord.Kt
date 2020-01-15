@@ -31,16 +31,9 @@ data class GuildUser(
     val isMutedInVoice: Boolean
 ) {
     @JsonIgnore
-    var roles = listOf<GuildRole>()
+    var roles = arrayOf<GuildRole>()
         internal set
 
     @JsonIgnore
     val roleIds: Array<Long> = _roleIds ?: arrayOf()
-
-    // fun setRoleIds(roleIds: Array<Long>?) {
-    //
-    // }
-
-    // @JsonProperty("roles")
-    // var roleIds: Array<Long>
 }
