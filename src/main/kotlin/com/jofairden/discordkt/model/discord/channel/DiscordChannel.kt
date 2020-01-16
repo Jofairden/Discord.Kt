@@ -2,6 +2,7 @@ package com.jofairden.discordkt.model.discord.channel
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.jofairden.discordkt.model.api.ServiceProviderAware
+import com.jofairden.discordkt.model.discord.message.embed.MessageEmbed
 import com.jofairden.discordkt.model.discord.user.DiscordUser
 import com.jofairden.discordkt.model.request.CreateMessageBody
 import java.util.Date
@@ -45,10 +46,10 @@ data class DiscordChannel(
     val lastPinTimestamp: Date?
 ) : ServiceProviderAware() {
 
-    suspend fun sendMessage(text: String) {
+    suspend fun sendMessage(text: String, embed: MessageEmbed? = null) {
         serviceProvider.channelService.postChannelMessage(
             id,
-            CreateMessageBody(content = text)
+            CreateMessageBody(content = text, embed = embed)
         )
     }
 }

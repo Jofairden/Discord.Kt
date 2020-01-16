@@ -22,7 +22,6 @@ fun main() {
     val logger = KotlinLogging.logger {}
 
     DiscordClient.buildAndRun(getBotToken()) {
-
         onMessageReactionAdd {
             val channel = channel.await()
             if (this.emoji.name == "\uD83D\uDC4C") {

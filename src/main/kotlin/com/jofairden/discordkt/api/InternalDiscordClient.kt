@@ -12,6 +12,8 @@ import mu.KotlinLogging
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
+import org.koin.core.context.startKoin
+import org.koin.dsl.module
 
 internal class InternalDiscordClient(
     private val discordClient: DiscordClient
@@ -31,6 +33,14 @@ internal class InternalDiscordClient(
         // Inject client into Retrofit SP
         discordClient.serviceProvider = ApiServiceProvider(client)
         discordClient.dataCache = DataCache(discordClient.properties.dataCacheProperties, discordClient.serviceProvider)
+
+        // Start DI instance
+        startKoin {
+            modules(module {
+                single { discordClient.serviceProvider }
+                single { discordClient.dataCache }
+            })
+        }
 
         logger.info { "Connecting to Discord..." }
         createWebsocket()

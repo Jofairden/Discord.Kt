@@ -40,6 +40,7 @@ dependencies {
     implementation("io.github.microutils:kotlin-logging:${gradleProperty("kotlin-logging-version")}")
     implementation("org.slf4j:slf4j-simple:${gradleProperty("sl4j-simple-version")}")
     implementation("com.github.ben-manes.caffeine:caffeine:${gradleProperty("caffeine-version")}")
+    implementation("org.koin:koin-core:${gradleProperty("koin-version")}")
 }
 
 tasks {
@@ -67,6 +68,3 @@ tasks {
 fun gradleProperty(key: String): String {
     return gradle.rootProject.extra[key]?.toString() ?: return "NULL"
 }
-
-fun DependencyHandler.fuel(module: String, version: String? = null): Any =
-    "com.github.kittinunf.fuel:$module${version?.let { ":$version" } ?: ""}"
