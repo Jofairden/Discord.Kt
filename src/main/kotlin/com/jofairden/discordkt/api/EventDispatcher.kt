@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.jofairden.discordkt.api.cache.CombinedId
 import com.jofairden.discordkt.api.cache.getSuspending
+import com.jofairden.discordkt.api.command.CommandContext
 import com.jofairden.discordkt.model.context.event.ChannelCreateEventContext
 import com.jofairden.discordkt.model.context.event.GuildMemberAddEventContext
 import com.jofairden.discordkt.model.context.event.GuildMemberRemoveEventContext
@@ -47,6 +48,7 @@ internal class EventDispatcher(
         with(client) {
             when (event) {
                 GatewayEvent.Hello -> {
+                    logger.info { "Discord said Hello" }
                 }
                 GatewayEvent.Ready -> {
                     val ctx = parseNode<ReadyEventContext>(node)
@@ -154,6 +156,20 @@ internal class EventDispatcher(
                     var message = parseNode<DiscordMessage>(node)
                     message = dataCache.enrich(message)
                     dataCache.cacheMessage(message)
+                    if (message.content != null) {
+                        val cmds = commands.filter { it.matches(message.content!!.toLowerCase().split(" ")[0]) }
+                        val ctx = CommandContext(
+                            message,
+                            message.channel.await(),
+                            message.guild.await()
+                        )
+                        cmds.forEach {
+                            with(it) { ctx.execute(message.content!!.split(" ").joinToString { it }) }
+                        }
+                        cmds.forEach {
+                            with(it) { ctx.postExecute() }
+                        }
+                    }
                     messageCreateEventBlocks.forEach { it(message) }
                 }
                 GatewayEvent.MessageUpdate -> {

@@ -2,6 +2,7 @@ package com.jofairden.discordkt.api
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.jofairden.discordkt.api.cache.DataCache
+import com.jofairden.discordkt.api.command.ChatCommand
 import com.jofairden.discordkt.model.api.DiscordClientProperties
 import com.jofairden.discordkt.model.discord.user.DiscordUser
 import com.jofairden.discordkt.model.discord.user.UserStatus
@@ -49,6 +50,25 @@ class DiscordClient {
         this.properties = properties
         internalClient.connect()
     }
+
+    internal val commands: MutableList<ChatCommand> = arrayListOf()
+    fun registerCommand(command: ChatCommand) {
+        commands += command
+    }
+
+    fun registerCommands(clazz: Class<*>) {
+        clazz.declaredClasses.filter { ChatCommand::class.java.isAssignableFrom(it) }
+            .map { it as Class<ChatCommand> }
+            .forEach {
+                registerCommand(it.newInstance())
+            }
+    }
+
+    // fun findAndRegisterCommands(clazz: Class<*>) {
+    //     findCommands(clazz.classLoader)?.forEach {
+    //         registerCommand(it)
+    //     }
+    // }
 
     internal val readyEventHandlers: MutableList<ReadyEventBlock> = arrayListOf()
     internal val resumedEventBlocks: MutableList<NoArgsEventBlock> = arrayListOf()
