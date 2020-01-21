@@ -1,11 +1,11 @@
 package com.jofairden.discordkt.services
 
-import com.fasterxml.jackson.databind.JsonNode
 import com.jofairden.discordkt.model.discord.channel.DiscordChannel
 import com.jofairden.discordkt.model.discord.guild.PartialGuild
 import com.jofairden.discordkt.model.discord.user.Connection
 import com.jofairden.discordkt.model.discord.user.DiscordUser
 import com.jofairden.discordkt.model.request.ModifyBotUserBody
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.Field
@@ -24,12 +24,12 @@ interface UserService {
     @GET("users/{user-id}")
     suspend fun getUser(
         @Path("user-id") userId: Long
-    ): DiscordUser // User
+    ): DiscordUser
 
     @PATCH("users/@me")
     suspend fun modifyBotUser(
         @Body body: ModifyBotUserBody
-    ): DiscordUser // User
+    ): DiscordUser
 
     @PATCH("users/@me")
     suspend fun modifyBotUser(
@@ -42,7 +42,7 @@ interface UserService {
     @DELETE("users/@me/guilds/{guild-id}")
     suspend fun leaveGuild(
         @Path("guild-id") guildId: Long
-    ): JsonNode // 204 Empty
+    ): Response<Unit>
 
     @POST("users/@me/channels")
     suspend fun createDMChannel(

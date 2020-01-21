@@ -1,9 +1,12 @@
 package com.jofairden.discordkt.services
 
 import com.fasterxml.jackson.databind.JsonNode
+import com.jofairden.discordkt.model.discord.channel.DiscordChannel
 import com.jofairden.discordkt.model.discord.guild.Guild
+import com.jofairden.discordkt.model.discord.guild.GuildInvite
 import com.jofairden.discordkt.model.discord.guild.GuildUser
 import com.jofairden.discordkt.model.discord.role.GuildRole
+import retrofit2.Response
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PATCH
@@ -17,39 +20,40 @@ import retrofit2.http.Path
 interface GuildService {
 
     @POST("guilds")
-    suspend fun createGuild(): Guild // Guild
+    suspend fun createGuild(): Guild
 
     @GET("guilds/{guild-id}")
     suspend fun getGuild(
         @Path("guild-id") guildId: Long
-    ): Guild // Guild
+    ): Guild
 
     @PATCH("guilds/{guild-id}")
     suspend fun modifyGuild(
         @Path("guild-id") guildId: Long
-    ): Guild // Guild
+    ): Guild
 
     @DELETE("guilds/{guild-id}")
     suspend fun deleteGuild(
         @Path("guild-id") guildId: Long
-    ): JsonNode // 204 No Content
+    ): Response<Unit>
 
     @GET("guilds/{guild-id}/channels")
     suspend fun getGuildChannels(
         @Path("guild-id") guildId: Long
-    ): ArrayList<JsonNode> // Channel
+    ): ArrayList<DiscordChannel> // Channel
 
     //MANAGE_CHANNELS
+    // TODO body
     @POST("guilds/{guild-id}/channels")
-    suspend fun createGuildChannels(
+    suspend fun createGuildChannel(
         @Path("guild-id") guildId: Long
-    ): JsonNode // Channel
+    ): DiscordChannel // Channel
 
     //MANAGE_CHANNELS
     @PATCH("guilds/{guild-id}/channels")
     suspend fun modifyGuildChannelPositions(
         @Path("guild-id") guildId: Long
-    ): JsonNode // 204 Empty
+    ): Response<Unit> // 204 Empty
 
     @GET("guilds/{guild-id}/members/{user-id}")
     suspend fun getGuildMember(
@@ -66,13 +70,13 @@ interface GuildService {
     suspend fun addGuildMember(
         @Path("guild-id") guildId: Long,
         @Path("user-id") userId: Long
-    ): JsonNode // 201 Created // 204 No content
+    ): Response<Unit> // 201 Created // 204 No content
 
     @PATCH("guilds/{guild-id}/members/{user-id}")
     suspend fun modifyGuildMember(
         @Path("guild-id") guildId: Long,
         @Path("user-id") userId: Long
-    ): JsonNode // 204 No content
+    ): Response<Unit>
 
     @PATCH("guilds/{guild-id}/members/@me/nick")
     suspend fun modifyCurrentUserNick(
@@ -85,7 +89,7 @@ interface GuildService {
         @Path("guild-id") guildId: Long,
         @Path("user-id") userId: Long,
         @Path("role-id") roleId: Long
-    ): JsonNode // 204 empty
+    ): Response<Unit>
 
     //MANAGE_ROLES
     @DELETE("guilds/{guild-id}/members/{user-id}/roles/{role-id}")
@@ -93,14 +97,14 @@ interface GuildService {
         @Path("guild-id") guildId: Long,
         @Path("user-id") userId: Long,
         @Path("role-id") roleId: Long
-    ): JsonNode // 204 empty
+    ): Response<Unit>
 
     //KICK_MEMBERS
     @DELETE("guilds/{guild-id}/members/{user-id}")
     suspend fun removeGuildMember(
         @Path("guild-id") guildId: Long,
         @Path("user-id") userId: Long
-    ): JsonNode // 204 empty
+    ): Response<Unit>
 
     //BAN_MEMBERS
     @GET("guilds/{guild-id}/bans")
@@ -181,7 +185,7 @@ interface GuildService {
     @GET("guilds/{guild-id}/invites")
     suspend fun getGuildInvites(
         @Path("guild-id") guildId: Long
-    ): ArrayList<JsonNode> // Invite
+    ): ArrayList<GuildInvite> // Invite
 
     //MANAGE_GUILD
     @GET("guilds/{guild-id}/integrations")
@@ -193,28 +197,28 @@ interface GuildService {
     @POST("guilds/{guild-id}/integrations")
     suspend fun createGuildIntegration(
         @Path("guild-id") guildId: Long
-    ): JsonNode // 204
+    ): Response<Unit>
 
     //MANAGE_GUILD
     @PATCH("guilds/{guild-id}/integrations/{integration-id}")
     suspend fun modifyGuildIntegration(
         @Path("guild-id") guildId: Long,
         @Path("integration-id") integrationId: Long
-    ): JsonNode // 204
+    ): Response<Unit>
 
     //MANAGE_GUILD
     @DELETE("guilds/{guild-id}/integrations/{integration-id}")
     suspend fun deleteGuildIntegration(
         @Path("guild-id") guildId: Long,
         @Path("integration-id") integrationId: Long
-    ): JsonNode // 204
+    ): Response<Unit>
 
     //MANAGE_GUILD
     @POST("guilds/{guild-id}/integrations/{integration-id}/sync")
     suspend fun syncGuildIntegration(
         @Path("guild-id") guildId: Long,
         @Path("integration-id") integrationId: Long
-    ): JsonNode // 204
+    ): Response<Unit>
 
     //MANAGE_GUILD
     @GET("guilds/{guild-id}/embed")

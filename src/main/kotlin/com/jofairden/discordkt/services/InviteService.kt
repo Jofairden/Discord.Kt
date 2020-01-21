@@ -1,6 +1,6 @@
 package com.jofairden.discordkt.services
 
-import com.fasterxml.jackson.databind.JsonNode
+import com.jofairden.discordkt.model.discord.guild.GuildInvite
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -12,10 +12,10 @@ interface InviteService {
     @GET("invites/{invite-code}")
     suspend fun getInvite(
         @Path("invite-code") guildId: Long
-    ): JsonNode // Invite
+    ): GuildInvite // Invite
 
     @DELETE("invites/{invite-code}")
     suspend fun deleteInvite(
         @Path("invite-code") guildId: Long
-    ): JsonNode
+    ): GuildInvite
 }

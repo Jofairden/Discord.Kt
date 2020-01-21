@@ -1,7 +1,7 @@
 package com.jofairden.discordkt.services
 
-import com.fasterxml.jackson.databind.JsonNode
 import com.jofairden.discordkt.model.discord.emoji.DiscordEmoji
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
@@ -39,5 +39,5 @@ interface EmojiService {
     suspend fun deleteGuildEmoji(
         @Path("guild-id") guildId: Long,
         @Path("emoji-id") emojiId: Long
-    ): JsonNode // 204 No content
+    ): Response<Unit> // 204 No content
 }
