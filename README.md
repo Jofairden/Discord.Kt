@@ -12,56 +12,28 @@ The library is not yet released.
 To use it you must pull the repository and locally install it.
 
 # Basic example
-Ping-Pong
-```kotlin
-fun main() {
-    DiscordClient.buildAndRun(getBotToken()) {
-        onMessageCreate { msg ->
-            if (msg.content == ".ping") {
-                with(msg) {
-                    reply("pong!")
-                }
-            }
-        }
-    }
-}
-```
-Ping-Pong with message update
-```kotlin
-fun main() {
-    DiscordClient.buildAndRun(getBotToken()) {
-        onMessageCreate { msg ->
-            if (msg.author.id == botUser.id
-                && msg.content == "pong!"
-            ) {
-                with(msg) {
-                    edit(
-                        EditMessageBody(
-                            "pong! (${Date().time - msg.timestamp.time} ms)"
-                        )
-                    )
-                }
-            } else if (msg.content == ".ping") {
-                with(msg) {
-                    reply("pong!")
-                }
-            }
-        }
-    }
-}
-```
+For current accurate examples, please see the [example package](https://github.com/Jofairden/Discord.Kt/tree/master/src/main/kotlin/com/jofairden/discordkt/example)
 
 # Feature set
 Current lib features: (list incomplete)
 - [x] Connect with Discord
-- [x] Reply to messages
-- [x] Send embeds
+- [x] Send messages including embeds
+- [x] Edit messages
+- [x] Remove messages
+- [x] Pin/unpin messages
+- [x] Ban/unban users
+- [x] React to messages
+- [x] Remove reactions
+- [x] Add/delete/modify roles from guild
+- [x] Change users' roles/nickname
+- [x] Add/delete/modify channels
+- [x] Add/delete guild invites
+- [x] Prune members
 - [x] Hook into any discord event (excluding voice events)
-- [ ] Change bot details (name, presence etc)
+- [x] Change bot details (name, presence etc)
 
-# Dev task list
-List of things completed, and things yet to be done.
-(The list may not accurately represent the current state of the lib)
+# Technical dev task list
+List of things completed, and things yet to be done: (the list may not accurately represent the current state of the lib)
 - [x] Connect with Discord & Send heartbeats
 - [x] Handle connection resumption
 - [x] Message Dispatcher
@@ -74,11 +46,11 @@ List of things completed, and things yet to be done.
 - [x] Retrofit services for all resources
 - [x] Storing resources (cache) (high prio) (not final)
 - [x] Model classes for Guild, User, Role and all other associated resources
-- [ ] Command module registration
+- [x] Command module registration
 - [ ] Split generic classes into more specific classes (e.g. DiscordChannel -> GuildChannel -> GuildTextChannel etc.)
 
 # Libraries
-The listed libraries may not be final
+Discord.kt was built with the following libraries: (the listed libraries may not be final)
 
 | Library       | Version       | License       |
 | ------------- | ------------- | ------------- |
@@ -94,7 +66,7 @@ The listed libraries may not be final
 If you would like to receive help with the lib or help develop the lib, it's best to join our [Discord server](https://discord.gg/RkBVCmy). Discord is similar to IRC chats. To use Discord you will need to register a new account on [their website](https://discordapp.com/).
 
 # License
-[Apache2.0 License](https://github.com/Jofairden/Discord.Kt/blob/master/LICENSE)
+[Apache 2.0 License](https://github.com/Jofairden/Discord.Kt/blob/master/LICENSE)
 ```
 Copyright 2020 Daniël Zondervan
 
