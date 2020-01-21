@@ -61,7 +61,7 @@ internal class InternalDiscordClient(
     }
 
     private fun createWebsocket() = runBlocking(Dispatchers.IO) {
-        val url = discordClient.serviceProvider.gatewayService.getGateway()["url"].asText()
+        val url = discordClient.serviceProvider.gatewayService.getGateway().url
         val req = Request.Builder().url("$url?v=6&encoding=json").build()
         webSocket = client.newWebSocket(req, discordWsListener)
     }

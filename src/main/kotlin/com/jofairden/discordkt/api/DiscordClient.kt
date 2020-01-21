@@ -4,12 +4,15 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.jofairden.discordkt.api.cache.DataCache
 import com.jofairden.discordkt.model.api.DiscordClientProperties
 import com.jofairden.discordkt.model.discord.user.DiscordUser
+import com.jofairden.discordkt.model.discord.user.UserStatus
+import com.jofairden.discordkt.model.discord.user.UserStatusActivity
 import com.jofairden.discordkt.model.gateway.GatewayEvent
 import com.jofairden.discordkt.model.gateway.OpCode
 import com.jofairden.discordkt.model.gateway.payload.GatewayPayload
 import com.jofairden.discordkt.model.gateway.payload.HeartbeatPayload
 import com.jofairden.discordkt.model.gateway.payload.IdentifyPayload
 import com.jofairden.discordkt.model.gateway.payload.ResumePayload
+import com.jofairden.discordkt.model.gateway.payload.UpdateStatusPayload
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -32,6 +35,7 @@ class DiscordClient {
     }
 
     lateinit var botUser: DiscordUser
+        internal set
 
     private val logger = KotlinLogging.logger { }
     private val internalClient = InternalDiscordClient(this)
@@ -77,6 +81,38 @@ class DiscordClient {
     internal val messageReactionRemoveAllEventBlocks: MutableList<MessageReactionRemoveAllEventBlock> = arrayListOf()
     internal val typingStartEventBlocks: MutableList<TypingStartEventBlock> = arrayListOf()
     internal val userUpdateEventBlocks: MutableList<UserUpdateEventBlock> = arrayListOf()
+
+    suspend fun updateBotUser() =
+        serviceProvider.userService.getBotUser().also {
+            botUser = it
+        }
+
+    suspend fun updateBotUser(name: String) =
+        serviceProvider.userService.modifyBotUser(name).also {
+            botUser = it
+        }
+
+    suspend fun getGatewayUrl(): String =
+        serviceProvider.gatewayService.getGateway().url
+
+    fun updateStatus(
+        idleTime: Int? = null,
+        activity: UserStatusActivity? = null,
+        status: UserStatus? = null,
+        isAfk: Boolean = false
+    ) {
+        with(internalClient) {
+            GatewayPayload(
+                OpCode.StatusUpdate.code,
+                UpdateStatusPayload(
+                    idleTime,
+                    activity,
+                    status,
+                    isAfk
+                ).toJsonNode()
+            ).send()
+        }
+    }
 
     internal inner class GatewayGuardian(
         private val eventDispatcher: EventDispatcher

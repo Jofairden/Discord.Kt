@@ -24,6 +24,7 @@ import com.jofairden.discordkt.model.discord.guild.GuildUser
 import com.jofairden.discordkt.model.discord.guild.UnavailableGuild
 import com.jofairden.discordkt.model.discord.message.DiscordMessage
 import com.jofairden.discordkt.model.discord.message.DiscordMessageUpdate
+import com.jofairden.discordkt.model.discord.user.DiscordUser
 import com.jofairden.discordkt.model.gateway.GatewayEvent
 import com.jofairden.discordkt.util.JsonUtil
 import mu.KotlinLogging
@@ -207,7 +208,9 @@ internal class EventDispatcher(
                     typingStartEventBlocks.forEach { it(parseNode(node)) }
                 }
                 GatewayEvent.UserUpdate -> {
-                    userUpdateEventBlocks.forEach { it(parseNode(node)) }
+                    val user = parseNode<DiscordUser>(node)
+                    client.botUser = user
+                    userUpdateEventBlocks.forEach { it(user) }
                 }
                 GatewayEvent.VoiceStateUpdate -> {
                     // TODO

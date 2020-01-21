@@ -2,7 +2,7 @@
 A Discord library written in Kotlin for Kotlin. The purpose of the library is to be easily able to create a Discord bot in Kotlin with minimal amount of code using Kotlin DSL.
 
 ## Support status
-This lib will likely only ever work on a JVM
+**This lib will likely only ever work on a JVM**
 *   JVM: ✓
 *   JS: ❌
 *   Native: ❌
@@ -75,17 +75,19 @@ List of things completed, and things yet to be done.
 - [x] Storing resources (cache) (high prio) (not final)
 - [x] Model classes for Guild, User, Role and all other associated resources
 - [ ] Command module registration
+- [ ] Split generic classes into more specific classes (e.g. DiscordChannel -> GuildChannel -> GuildTextChannel etc.)
 
 # Libraries
 The listed libraries may not be final
 
 | Library       | Version       | License       |
 | ------------- | ------------- | ------------- |
-| OkHttp  | 4.3.0 | Apache 2.0 |
-| Jackson  | 2.10.2| Apache 2.0 |
-| Retrofit | 2.7.1 | Apache 2.0 |
-| Kotlin-Logging | 1.7.7 | Apache 2.0 |
-| Caffeine | 2.8.0 | Apache 2.0 |
+| [OkHttp](https://github.com/square/okhttp)  | 4.3.0 | Apache 2.0 |
+| [Jackson](https://github.com/FasterXML/jackson)  | 2.10.2| Apache 2.0 |
+| [Retrofit](https://github.com/square/retrofit) | 2.7.1 | Apache 2.0 |
+| [Kotlin-Logging](https://github.com/MicroUtils/kotlin-logging) | 1.7.7 | Apache 2.0 |
+| [Caffeine](https://github.com/ben-manes/caffeine) | 2.8.0 | Apache 2.0 |
+| [Koin](https://github.com/InsertKoinIO/koin) | 2.0.1 | Apache 2.0 |
 
 # How to get in touch
 

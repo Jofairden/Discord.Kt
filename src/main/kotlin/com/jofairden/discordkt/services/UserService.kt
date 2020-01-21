@@ -5,6 +5,8 @@ import com.jofairden.discordkt.model.discord.channel.DiscordChannel
 import com.jofairden.discordkt.model.discord.guild.PartialGuild
 import com.jofairden.discordkt.model.discord.user.Connection
 import com.jofairden.discordkt.model.discord.user.DiscordUser
+import com.jofairden.discordkt.model.request.ModifyBotUserBody
+import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.Field
 import retrofit2.http.GET
@@ -25,7 +27,14 @@ interface UserService {
     ): DiscordUser // User
 
     @PATCH("users/@me")
-    suspend fun modifyBotUser(): DiscordUser // User
+    suspend fun modifyBotUser(
+        @Body body: ModifyBotUserBody
+    ): DiscordUser // User
+
+    @PATCH("users/@me")
+    suspend fun modifyBotUser(
+        @Field("username") username: String
+    ): DiscordUser
 
     @GET("users/@me/guilds")
     suspend fun getBotUserGuilds(): ArrayList<PartialGuild> // PartialGuild
@@ -43,3 +52,5 @@ interface UserService {
     @GET("users/@me/connections")
     suspend fun getBotUserConnections(): Array<Connection> // Connection
 }
+
+
