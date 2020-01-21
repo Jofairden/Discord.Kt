@@ -9,14 +9,14 @@ data class DiscordEmoji(
     @JsonProperty("name")
     override val name: String?,
     @JsonProperty("roles")
-    val roles: Array<JsonNode>?,
+    val roles: Array<JsonNode>? = null,
     @JsonProperty("user")
-    val creator: JsonNode?, // DiscordUser
+    val creator: JsonNode? = null, // DiscordUser
     @JsonProperty("require_colons")
-    val requireColons: Boolean?,
+    val requireColons: Boolean? = null,
     @JsonProperty("managed")
-    val managed: Boolean?,
+    val managed: Boolean? = null,
     @JsonProperty("amimated")
-    val animated: Boolean?
+    val animated: Boolean? = null
 ) : IEmoji
 

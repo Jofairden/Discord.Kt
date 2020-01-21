@@ -2,11 +2,19 @@ package com.jofairden.discordkt.model.discord.channel
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.jofairden.discordkt.model.api.ServiceProviderAware
+import com.jofairden.discordkt.model.discord.emoji.IEmoji
 import com.jofairden.discordkt.model.discord.message.embed.MessageEmbed
 import com.jofairden.discordkt.model.discord.user.DiscordUser
+import com.jofairden.discordkt.model.request.CreateChannelInviteBody
 import com.jofairden.discordkt.model.request.CreateMessageBody
+import com.jofairden.discordkt.model.request.EditChannelPermissionsBody
+import com.jofairden.discordkt.model.request.EditMessageBody
+import com.jofairden.discordkt.model.request.GroupDMAddRecipientBody
+import com.jofairden.discordkt.model.request.ModifyChannelBody
+import com.jofairden.discordkt.util.lazyAsync
 import java.util.Date
 
+// TODO split in DMChannel / GuildChannel / TextChannel
 data class DiscordChannel(
     @JsonProperty("id")
     val id: Long,
@@ -46,10 +54,67 @@ data class DiscordChannel(
     val lastPinTimestamp: Date?
 ) : ServiceProviderAware() {
 
-    suspend fun sendMessage(text: String, embed: MessageEmbed? = null) {
+    val guild by lazyAsync {
+        if (guildId == null) null else serviceProvider.guildService.getGuild(guildId)
+    }
+
+    suspend fun getChannel() = serviceProvider.channelService.getChannel(id)
+
+    suspend fun update(channel: ModifyChannelBody) = serviceProvider.channelService.modifyChannel(id, channel)
+
+    suspend fun delete() = serviceProvider.channelService.deleteChannel(id)
+
+    suspend fun getMessages(limit: Int = 50) = serviceProvider.channelService.getChannelMessages(id, limit)
+
+    suspend fun getMessage(msgId: Long) = serviceProvider.channelService.getChannelMessage(id, msgId)
+
+    suspend fun sendMessage(text: String, embed: MessageEmbed? = null) =
         serviceProvider.channelService.postChannelMessage(
             id,
             CreateMessageBody(content = text, embed = embed)
         )
-    }
+
+    suspend fun addReaction(msgId: Long, emoji: IEmoji) =
+        serviceProvider.channelService.createReaction(id, msgId, IEmoji.getText(emoji))
+
+    suspend fun deleteReaction(msgId: Long, emoji: IEmoji) =
+        serviceProvider.channelService.deleteReaction(id, msgId, IEmoji.getText(emoji))
+
+    suspend fun deleteUserReaction(msgId: Long, emoji: IEmoji, userId: Long) =
+        serviceProvider.channelService.deleteUserReaction(id, msgId, IEmoji.getText(emoji), userId)
+
+    suspend fun getReactions(msgId: Long, emoji: IEmoji) =
+        serviceProvider.channelService.getReactions(id, msgId, IEmoji.getText(emoji))
+
+    suspend fun deleteAllReactions(msgId: Long) =
+        serviceProvider.channelService.deleteAllReactions(id, msgId)
+
+    suspend fun editMessage(msgId: Long, msgBody: EditMessageBody) =
+        serviceProvider.channelService.editMessage(id, msgId, msgBody)
+
+    suspend fun deleteMessage(msgId: Long) =
+        serviceProvider.channelService.deleteMessage(id, msgId)
+
+    suspend fun bulkDeleteMessages(messages: Array<Long>) =
+        serviceProvider.channelService.bulkDeleteMessages(id, messages)
+
+    suspend fun editChannelPermissions(overwriteId: Long, body: EditChannelPermissionsBody) =
+        serviceProvider.channelService.editChannelPermissions(id, overwriteId, body)
+
+    suspend fun getInvites() = serviceProvider.channelService.getChannelInvites(id)
+    suspend fun getInvite(inviteId: Long) = serviceProvider.channelService.getChannelInvite(id, inviteId)
+    suspend fun createInvite(body: CreateChannelInviteBody = CreateChannelInviteBody()) =
+        serviceProvider.channelService.createChannelInvite(id, body)
+
+    suspend fun deleteChannelPermission(overwriteId: Long) =
+        serviceProvider.channelService.deleteChannelPermission(id, overwriteId)
+
+    suspend fun triggerTypingIndicator() = serviceProvider.channelService.triggerTypingIndicator(id)
+    suspend fun getPinnedMessages() = serviceProvider.channelService.getPinnedMessages(id)
+    suspend fun addPinnedMessage(msgId: Long) = serviceProvider.channelService.addPinnedChannelMessage(id, msgId)
+    suspend fun deletePinnedMessage(msgId: Long) = serviceProvider.channelService.deletePinnedChannelMessage(id, msgId)
+    suspend fun addGroupDmRecipient(userId: Long, body: GroupDMAddRecipientBody) =
+        serviceProvider.channelService.groupDMAddRecipient(id, userId, body)
+
+    suspend fun deleteGroupDmRecipient(userId: Long) = serviceProvider.channelService.groupDMRemoveRecipient(id, userId)
 }

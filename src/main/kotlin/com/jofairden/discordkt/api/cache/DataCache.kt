@@ -226,7 +226,7 @@ class DataCache(
         if (!messageCache.asMap().containsKey(combinedId)) return
 
         val msg = messageCache.getSuspending(combinedId)
-        val emoji = if (ctx.emoji.id == null) UnicodeEmoji(ctx.emoji.id, ctx.emoji.name)
+        val emoji = if (ctx.emoji.id == null) UnicodeEmoji(id = ctx.emoji.id, name = ctx.emoji.name)
         else ctx.emoji
 
         val reaction = if (emoji.id == null) msg.reactions?.find { it.emoji.name == emoji.name }
@@ -267,7 +267,7 @@ class DataCache(
         if (!messageCache.asMap().containsKey(combinedId)) return
 
         val msg = messageCache.getSuspending(combinedId)
-        val emoji = if (ctx.emoji.id == null) UnicodeEmoji(ctx.emoji.id, ctx.emoji.name)
+        val emoji = if (ctx.emoji.id == null) UnicodeEmoji(id = ctx.emoji.id, name = ctx.emoji.name)
         else ctx.emoji
 
         val reaction = if (emoji.id == null) msg.reactions?.find { it.emoji.name == emoji.name }

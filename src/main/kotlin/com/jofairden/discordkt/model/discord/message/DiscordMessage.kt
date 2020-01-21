@@ -2,12 +2,15 @@ package com.jofairden.discordkt.model.discord.message
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.JsonNode
-import com.jofairden.discordkt.api.DiscordClient
+import com.jofairden.discordkt.api.cache.getSuspending
+import com.jofairden.discordkt.model.api.ApiAware
+import com.jofairden.discordkt.model.discord.emoji.IEmoji
 import com.jofairden.discordkt.model.discord.guild.GuildUser
 import com.jofairden.discordkt.model.discord.message.embed.MessageEmbed
 import com.jofairden.discordkt.model.discord.user.DiscordUser
 import com.jofairden.discordkt.model.request.CreateMessageBody
 import com.jofairden.discordkt.model.request.EditMessageBody
+import com.jofairden.discordkt.util.lazyAsync
 import java.util.Date
 
 data class DiscordMessage(
@@ -84,7 +87,15 @@ data class DiscordMessage(
     @JsonProperty("flags")
     val flags: Int
 
-) {
+) : ApiAware() {
+
+    val channel by lazyAsync {
+        dataCache.channelCache.getSuspending(channelId)
+    }
+
+    val guild by lazyAsync {
+        channel.await().guild
+    }
 
     fun copyFromMessageUpdate(update: DiscordMessageUpdate) =
         this.copy(
@@ -106,25 +117,25 @@ data class DiscordMessage(
             flags = update.flags ?: this.flags
         )
 
-    suspend fun DiscordClient.reply(text: String) {
-        this.serviceProvider.channelService.postChannelMessage(
+    suspend fun reply(text: String) =
+        serviceProvider.channelService.postChannelMessage(
             channelId,
             CreateMessageBody(text)
         )
-    }
 
-    suspend fun DiscordClient.reply(embed: MessageEmbed) {
-        this.serviceProvider.channelService.postChannelMessage(
+    suspend fun reply(embed: MessageEmbed) =
+        serviceProvider.channelService.postChannelMessage(
             channelId,
             CreateMessageBody("", embed = embed)
         )
-    }
 
-    suspend fun DiscordClient.edit(body: EditMessageBody) {
+    suspend fun edit(body: EditMessageBody) =
         serviceProvider.channelService.editMessage(
             channelId,
             id,
             body
         )
-    }
+
+    suspend fun react(reaction: IEmoji) =
+        serviceProvider.channelService.createReaction(channelId, id, IEmoji.getText(reaction))
 }

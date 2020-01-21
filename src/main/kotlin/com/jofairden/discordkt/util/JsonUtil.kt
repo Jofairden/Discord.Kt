@@ -17,4 +17,5 @@ internal object JsonUtil {
         .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
         .enable(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES)
         .enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)
+        .enable(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT)
 }
