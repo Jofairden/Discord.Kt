@@ -1,7 +1,8 @@
 package com.jofairden.discordkt.model.discord.channel
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.jofairden.discordkt.model.api.ServiceProviderAware
+import com.jofairden.discordkt.api.cache.getSuspending
+import com.jofairden.discordkt.model.api.ApiAware
 import com.jofairden.discordkt.model.discord.emoji.IEmoji
 import com.jofairden.discordkt.model.discord.message.embed.MessageEmbed
 import com.jofairden.discordkt.model.discord.user.DiscordUser
@@ -52,13 +53,13 @@ data class DiscordChannel(
     val parentId: Long?,
     @JsonProperty("last_pin_timestamp")
     val lastPinTimestamp: Date?
-) : ServiceProviderAware() {
+) : ApiAware() {
 
     val guild by lazyAsync {
-        if (guildId == null) null else serviceProvider.guildService.getGuild(guildId)
+        if (guildId == null) null else dataCache.guildCache.getSuspending(guildId)
     }
 
-    suspend fun getChannel() = serviceProvider.channelService.getChannel(id)
+    suspend fun getChannel() = dataCache.channelCache.getSuspending(id)
 
     suspend fun update(channel: ModifyChannelBody) = serviceProvider.channelService.modifyChannel(id, channel)
 

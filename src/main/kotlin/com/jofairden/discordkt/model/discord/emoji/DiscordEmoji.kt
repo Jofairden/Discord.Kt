@@ -1,8 +1,10 @@
 package com.jofairden.discordkt.model.discord.emoji
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.JsonNode
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class DiscordEmoji(
     @JsonProperty("id")
     override val id: Long?,

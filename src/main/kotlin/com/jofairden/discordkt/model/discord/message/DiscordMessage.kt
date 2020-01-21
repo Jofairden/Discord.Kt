@@ -94,7 +94,7 @@ data class DiscordMessage(
     }
 
     val guild by lazyAsync {
-        channel.await().guild
+        channel.await().guild.await()
     }
 
     fun copyFromMessageUpdate(update: DiscordMessageUpdate) =

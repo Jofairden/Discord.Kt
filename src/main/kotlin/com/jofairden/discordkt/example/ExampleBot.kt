@@ -64,6 +64,17 @@ fun main() {
                         msg.react(UnicodeEmoji(name = split[1]))
                     }
                 }
+            } else if (cmd == ".nick") {
+                if (split.size > 1) {
+                    val ch = msg.channel.await()
+                    val g = ch.guild.await()
+                    g?.modifyCurrentUserNick(split[1])
+                }
+            } else if (cmd == ".owner") {
+                val g = msg.guild.await()
+                g?.owner?.await()?.let { user ->
+                    msg.reply("Owner: ${user.username}")
+                }
             }
         }
         onMessageReactionAdd {

@@ -147,7 +147,7 @@ class DataCache(
             cacheEmoji(guild.id, it)
         }
         guild.channels?.forEach {
-            cacheChannel(it)
+            cacheChannel(it.copy(guildId = guild.id))
         }
         updateGuildUsers(guild.id)
     }
