@@ -36,8 +36,12 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${gradleProperty("coroutines-version")}")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:${gradleProperty("coroutines-version")}")
+
+    api("io.github.microutils:kotlin-logging:${gradleProperty("kotlin-logging-version")}")
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-core:${gradleProperty("coroutines-version")}")
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:${gradleProperty("coroutines-version")}")
+    api("org.koin:koin-core:${gradleProperty("koin-version")}")
+
     implementation("com.squareup.okhttp3:okhttp:${gradleProperty("okhttp-version")}")
     implementation("com.fasterxml.jackson.core:jackson-core:${gradleProperty("jackson-version")}")
     implementation("com.fasterxml.jackson.core:jackson-annotations:${gradleProperty("jackson-version")}")
@@ -47,10 +51,8 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${gradleProperty("jackson-version")}")
     implementation("com.squareup.retrofit2:retrofit:${gradleProperty("retrofit-version")}")
     implementation("com.squareup.retrofit2:converter-jackson:${gradleProperty("retrofit-version")}")
-    implementation("io.github.microutils:kotlin-logging:${gradleProperty("kotlin-logging-version")}")
     implementation("org.slf4j:slf4j-simple:${gradleProperty("sl4j-simple-version")}")
     implementation("com.github.ben-manes.caffeine:caffeine:${gradleProperty("caffeine-version")}")
-    implementation("org.koin:koin-core:${gradleProperty("koin-version")}")
 }
 
 tasks {

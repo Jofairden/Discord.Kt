@@ -1,0 +1,6 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="kotlinkt:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/kotlinkt_jar</output-path>
+    <root id="archive" name="kotlinkt.jar" />
+  </artifact>
+</component>
