@@ -47,13 +47,7 @@ dependencies {
 }
 ```
 ### Maven
-```xml
-<dependency>
-    <groupId>com.jpfaordem</groupId>
-    <artifactId>discord.kt</artifactId>
-    <version>LATEST_VERSION</version>
-</dependency>
-```
+Locate the final package in the [packages page](https://github.com/Jofairden/Discord.Kt/packages) on Github and follow the instructions.
 
 # Basic example
 For current accurate examples, please see the [example bot](https://github.com/Jofairden/Discord.Kt-Example-Bot).
