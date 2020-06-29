@@ -10,7 +10,7 @@ val jvmTarget = gradleProperty("jvm-target")
 
 plugins {
     kotlin("jvm") version "1.3.61"
-    id("org.jlleitschuh.gradle.ktlint") version "9.1.1"
+    id("org.jlleitschuh.gradle.ktlint") version "9.2.1"
     `maven-publish`
 }
 
@@ -20,7 +20,11 @@ java {
 }
 
 subprojects {
+    // Gradle plugin that automatically creates check and format tasks for project Kotlin sources, supports different kotlin plugins and Gradle build caching.
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
+    ktlint {
+        debug.set(true)
+    }
 }
 
 repositories {

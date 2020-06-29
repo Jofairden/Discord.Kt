@@ -1,6 +1,6 @@
 root = true
 
-[*.kt]
+[*.{kt,kts}]
 indent_size = 4
 insert_final_newline = true
 max_line_length = off
