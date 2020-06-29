@@ -86,9 +86,9 @@ data class Guild(
     @JsonProperty("system_channel_id")
     val systemChannelId: Long?,
 
-    ///
+    // /
     // GUILD_CREATE START
-    ///
+    // /
 
     @JsonProperty("joined_at")
     val joinedAt: String?,
@@ -111,9 +111,9 @@ data class Guild(
     @JsonProperty("presences")
     val presences: Array<DiscordUserPresence>?, // Partial presence update
 
-    ///
+    // /
     // GUILD_CREATE END
-    ///
+    // /
 
     @JsonProperty("max_presences")
     val maxPresenceCount: Int?,

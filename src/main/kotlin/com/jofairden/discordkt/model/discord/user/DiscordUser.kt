@@ -41,5 +41,5 @@ class DiscordUser(
     val nitroType: NitroType?
 ) {
 
-    val avatarUrl = "https://cdn.discordapp.com/avatars/${id}/${avatarHash}.png"
+    val avatarUrl = "https://cdn.discordapp.com/avatars/$id/$avatarHash.png"
 }

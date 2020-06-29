@@ -56,7 +56,7 @@ interface GuildService {
         @Path("guild-id") guildId: Long
     ): ArrayList<DiscordChannel> // Channel
 
-    //MANAGE_CHANNELS
+    // MANAGE_CHANNELS
     // TODO body
     @POST("guilds/{guild-id}/channels")
     suspend fun createGuildChannel(
@@ -64,7 +64,7 @@ interface GuildService {
         @Body body: CreateGuildChannelBody
     ): DiscordChannel // Channel
 
-    //MANAGE_CHANNELS
+    // MANAGE_CHANNELS
     @PATCH("guilds/{guild-id}/channels")
     suspend fun modifyGuildChannelPositions(
         @Path("guild-id") guildId: Long
@@ -74,14 +74,14 @@ interface GuildService {
     suspend fun getGuildMember(
         @Path("guild-id") guildId: Long,
         @Path("user-id") userId: Long
-    ): GuildUser //Guild Member
+    ): GuildUser // Guild Member
 
     @GET("guilds/{guild-id}/members")
     suspend fun getGuildMembers(
         @Path("guild-id") guildId: Long,
         @Query("limit") limit: Int? = null,
         @Query("after") after: Long? = null
-    ): Array<GuildUser> //Guild Member
+    ): Array<GuildUser> // Guild Member
 
     // TODO
     // @PUT("guilds/{guild-id}/members/{user-id}")
@@ -104,7 +104,7 @@ interface GuildService {
         @Field("nick") nick: String
     ): Response<Unit> // 200 with nick
 
-    //MANAGE_ROLES
+    // MANAGE_ROLES
     @PUT("guilds/{guild-id}/members/{user-id}/roles/{role-id}")
     suspend fun addGuildMemberRole(
         @Path("guild-id") guildId: Long,
@@ -112,7 +112,7 @@ interface GuildService {
         @Path("role-id") roleId: Long
     ): Response<Unit>
 
-    //MANAGE_ROLES
+    // MANAGE_ROLES
     @DELETE("guilds/{guild-id}/members/{user-id}/roles/{role-id}")
     suspend fun removeGuildMemberRole(
         @Path("guild-id") guildId: Long,
@@ -120,27 +120,27 @@ interface GuildService {
         @Path("role-id") roleId: Long
     ): Response<Unit>
 
-    //KICK_MEMBERS
+    // KICK_MEMBERS
     @DELETE("guilds/{guild-id}/members/{user-id}")
     suspend fun removeGuildMember(
         @Path("guild-id") guildId: Long,
         @Path("user-id") userId: Long
     ): Response<Unit>
 
-    //BAN_MEMBERS
+    // BAN_MEMBERS
     @GET("guilds/{guild-id}/bans")
     suspend fun getGuildBans(
         @Path("guild-id") guildId: Long
     ): ArrayList<JsonNode> // Ban
 
-    //BAN_MEMBERS
+    // BAN_MEMBERS
     @GET("guilds/{guild-id}/bans/{user-id}")
     suspend fun getGuildBan(
         @Path("guild-id") guildId: Long,
         @Path("user-id") userId: Long
     ): JsonNode // Ban//404
 
-    //BAN_MEMBERS
+    // BAN_MEMBERS
     @PUT("guilds/{guild-id}/bans/{user-id}")
     suspend fun createGuildBan(
         @Path("guild-id") guildId: Long,
@@ -149,7 +149,7 @@ interface GuildService {
         @Query("reason") reason: String? = null
     ): JsonNode // Ban//404
 
-    //BAN_MEMBERS
+    // BAN_MEMBERS
     @DELETE("guilds/{guild-id}/bans/{user-id}")
     suspend fun removeGuildBan(
         @Path("guild-id") guildId: Long,
@@ -161,14 +161,14 @@ interface GuildService {
         @Path("guild-id") guildId: Long
     ): Array<GuildRole>
 
-    //MANAGE_ROLES
+    // MANAGE_ROLES
     @POST("guilds/{guild-id}/roles")
     suspend fun createGuildRole(
         @Path("guild-id") guildId: Long,
         @Body body: CreateGuildRoleBody
     ): GuildRole
 
-    //MANAGE_ROLES
+    // MANAGE_ROLES
     @FormUrlEncoded
     @PATCH("guilds/{guild-id}/roles")
     suspend fun modifyGuildRolePositions(
@@ -176,7 +176,7 @@ interface GuildService {
         @Body body: Array<ModifyGuildRolePositionBody>
     ): ArrayList<GuildRole>
 
-    //MANAGE_ROLES
+    // MANAGE_ROLES
     @PATCH("guilds/{guild-id}/roles/{role-id}")
     suspend fun modifyGuildRole(
         @Path("guild-id") guildId: Long,
@@ -184,21 +184,21 @@ interface GuildService {
         @Body body: CreateGuildRoleBody
     ): GuildRole
 
-    //MANAGE_ROLES
+    // MANAGE_ROLES
     @DELETE("guilds/{guild-id}/roles/{role-id}")
     suspend fun deleteGuildRole(
         @Path("guild-id") guildId: Long,
         @Path("role-id") roleId: Long
     ): Response<Unit>
 
-    //KICK_MEMBERS
+    // KICK_MEMBERS
     @GET("guilds/{guild-id}/prune")
     suspend fun getGuildPruneCount(
         @Path("guild-id") guildId: Long,
         @Query("days") days: Int? = null
     ): GuildPruneCount
 
-    //KICK_MEMBERS
+    // KICK_MEMBERS
     @POST("guilds/{guild-id}/prune")
     suspend fun beginGuildPrune(
         @Path("guild-id") guildId: Long,
@@ -211,13 +211,13 @@ interface GuildService {
     //     @Path("guild-id") guildId: Long
     // ): ArrayList<JsonNode> // Voice Region
 
-    //MANAGE_GUILD
+    // MANAGE_GUILD
     @GET("guilds/{guild-id}/invites")
     suspend fun getGuildInvites(
         @Path("guild-id") guildId: Long
     ): ArrayList<GuildInvite> // Invite
 
-    //MANAGE_GUILD
+    // MANAGE_GUILD
     // @GET("guilds/{guild-id}/integrations")
     // suspend fun getGuildIntegrations(
     //     @Path("guild-id") guildId: Long
@@ -243,27 +243,27 @@ interface GuildService {
     //     @Path("integration-id") integrationId: Long
     // ): Response<Unit>
 
-    //MANAGE_GUILD
+    // MANAGE_GUILD
     // @POST("guilds/{guild-id}/integrations/{integration-id}/sync")
     // suspend fun syncGuildIntegration(
     //     @Path("guild-id") guildId: Long,
     //     @Path("integration-id") integrationId: Long
     // ): Response<Unit>
 
-    //MANAGE_GUILD
+    // MANAGE_GUILD
     @GET("guilds/{guild-id}/embed")
     suspend fun getGuildEmbed(
         @Path("guild-id") guildId: Long
     ): GuildEmbed // GuildEmbed
 
-    //MANAGE_GUILD
+    // MANAGE_GUILD
     @PATCH("guilds/{guild-id}/embed")
     suspend fun modifyGuildEmbed(
         @Path("guild-id") guildId: Long,
         @Body body: GuildEmbed
     ): GuildEmbed // GuildEmbed
 
-    //MANAGE_GUILD
+    // MANAGE_GUILD
     // REMARK: Code will be null if vanity url not set
     // @PATCH("guilds/{guild-id}/vanity-url")
     // suspend fun getGuildVanityUrl(

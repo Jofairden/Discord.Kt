@@ -5,7 +5,7 @@ data class DiscordClientProperties(
     val authType: ClientAuthType = ClientAuthType.Bot,
     val dataCacheProperties: DataCacheProperties = DataCacheProperties()
 ) {
-    fun getAuthorizationHeader() = "${authType} ${token}"
+    fun getAuthorizationHeader() = "$authType $token"
 }
 
 data class DataCacheProperties(

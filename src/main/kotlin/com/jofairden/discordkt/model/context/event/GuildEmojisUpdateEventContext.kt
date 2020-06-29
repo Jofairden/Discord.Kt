@@ -13,4 +13,3 @@ data class GuildEmojisUpdateEventContext(
 ) : IEventContext {
     override lateinit var discordClient: DiscordClient
 }
-

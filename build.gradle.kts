@@ -11,6 +11,12 @@ val jvmTarget = gradleProperty("jvm-target")
 plugins {
     kotlin("jvm") version "1.3.61"
     id("org.jlleitschuh.gradle.ktlint") version "9.1.1"
+    `maven-publish`
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 subprojects {
@@ -60,6 +66,27 @@ tasks {
         sourceCompatibility = gradleProperty("jvm-target")
         targetCompatibility = gradleProperty("jvm-target")
     }
+}
+
+publishing {
+    repositories {
+        maven {
+            /** We publish here */
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/jofairden/discord.kt")
+            /** Coming from Github */
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+    publications {
+        create<MavenPublication>("discord.kt") {
+            from(components["java"])
+        }
+    }
+    /** See gradle.properties for group and version */
 }
 
 /**

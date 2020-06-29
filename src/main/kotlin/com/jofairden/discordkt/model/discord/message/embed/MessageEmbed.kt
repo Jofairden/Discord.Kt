@@ -17,6 +17,3 @@ data class MessageEmbed(
     val author: EmbedAuthor? = null,
     val fields: Array<EmbedField>? = null
 )
-
-
-

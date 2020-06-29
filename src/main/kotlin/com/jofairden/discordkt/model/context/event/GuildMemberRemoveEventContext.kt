@@ -13,4 +13,3 @@ data class GuildMemberRemoveEventContext(
 ) : IEventContext {
     override lateinit var discordClient: DiscordClient
 }
-

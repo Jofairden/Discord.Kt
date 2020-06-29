@@ -29,4 +29,3 @@ data class GuildRole(
     @JsonProperty("mentionable")
     val isMentionable: Boolean
 )
-

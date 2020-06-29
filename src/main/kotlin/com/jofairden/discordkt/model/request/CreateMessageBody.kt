@@ -7,6 +7,3 @@ data class CreateMessageBody(
     val tts: Boolean = false,
     val embed: MessageEmbed? = null
 )
-
-
-

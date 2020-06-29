@@ -5,8 +5,8 @@ import com.jofairden.discordkt.dsl.onChannelCreate
 import com.jofairden.discordkt.dsl.onGuildMemberAdd
 import com.jofairden.discordkt.dsl.onMessageReactionAdd
 import com.jofairden.discordkt.example.command.SimpleCommands
-import mu.KotlinLogging
 import java.io.File
+import mu.KotlinLogging
 
 class ExampleBot
 

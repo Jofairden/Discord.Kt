@@ -1,14 +1,14 @@
 package com.jofairden.discordkt.api.cache
 
 import com.github.benmanes.caffeine.cache.AsyncCacheLoader
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.Executor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.future.asCompletableFuture
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.Executor
 
 internal class ApiAsyncLoader<K, V>(
     private val block: suspend (key: K) -> V

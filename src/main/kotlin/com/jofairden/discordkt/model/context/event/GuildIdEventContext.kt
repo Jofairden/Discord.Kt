@@ -9,4 +9,3 @@ data class GuildIdEventContext(
 ) : IEventContext {
     override lateinit var discordClient: DiscordClient
 }
-

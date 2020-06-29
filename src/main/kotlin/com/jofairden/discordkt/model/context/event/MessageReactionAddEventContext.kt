@@ -32,5 +32,3 @@ data class MessageReactionAddEventContext(
     val channel by lazyAsync { discordClient.dataCache.channelCache.getSuspending(channelId) }
     val message by lazyAsync { discordClient.dataCache.messageCache.getSuspending(CombinedId(channelId, messageId)) }
 }
-
-

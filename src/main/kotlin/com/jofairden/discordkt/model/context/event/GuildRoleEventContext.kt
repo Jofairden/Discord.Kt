@@ -13,5 +13,3 @@ data class GuildRoleEventContext(
 ) : IEventContext {
     override lateinit var discordClient: DiscordClient
 }
-
-

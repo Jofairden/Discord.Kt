@@ -22,4 +22,3 @@ data class TypingStartEventContext(
 ) : IEventContext {
     override lateinit var discordClient: DiscordClient
 }
-

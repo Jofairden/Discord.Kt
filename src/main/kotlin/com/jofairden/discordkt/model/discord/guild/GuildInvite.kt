@@ -33,5 +33,5 @@ data class GuildInvite(
     @JsonProperty("created_at")
     val creationDate: Date
 ) {
-    val url = "https://www.discord.gg/${code}"
+    val url = "https://www.discord.gg/$code"
 }

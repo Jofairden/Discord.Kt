@@ -22,5 +22,3 @@ data class MessageReactionRemoveEventContext(
 ) : IEventContext {
     override lateinit var discordClient: DiscordClient
 }
-
-

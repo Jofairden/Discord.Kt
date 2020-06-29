@@ -15,4 +15,3 @@ data class MessageDeleteBulkEventContext(
 ) : IEventContext {
     override lateinit var discordClient: DiscordClient
 }
-

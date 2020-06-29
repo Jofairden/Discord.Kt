@@ -44,4 +44,3 @@ data class ReadyEventContext(
 ) : IEventContext {
     override lateinit var discordClient: DiscordClient
 }
-

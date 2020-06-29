@@ -21,4 +21,3 @@ data class DiscordEmoji(
     @JsonProperty("amimated")
     val animated: Boolean? = null
 ) : IEmoji
-

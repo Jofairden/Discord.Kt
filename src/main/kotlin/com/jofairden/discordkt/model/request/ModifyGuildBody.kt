@@ -29,4 +29,3 @@ data class ModifyGuildBody(
     @JsonProperty("system_channel_id")
     val systemChannelId: Long? = null
 )
-

@@ -27,14 +27,14 @@ interface EmojiService {
         @Path("guild-id") guildId: Long
     ): DiscordEmoji // emoji
 
-    //MANAGE_EMOJIS
+    // MANAGE_EMOJIS
     @PATCH("guilds/{guild-id}/emojis/{emoji-id}")
     suspend fun modifyGuildEmoji(
         @Path("guild-id") guildId: Long,
         @Path("emoji-id") emojiId: Long
     ): DiscordEmoji // emoji
 
-    //MANAGE_EMOJIS
+    // MANAGE_EMOJIS
     @PATCH("guilds/{guild-id}/emojis/{emoji-id}")
     suspend fun deleteGuildEmoji(
         @Path("guild-id") guildId: Long,

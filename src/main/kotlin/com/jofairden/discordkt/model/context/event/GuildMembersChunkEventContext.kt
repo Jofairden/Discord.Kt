@@ -21,4 +21,3 @@ data class GuildMembersChunkEventContext(
 ) : IEventContext {
     override lateinit var discordClient: DiscordClient
 }
-

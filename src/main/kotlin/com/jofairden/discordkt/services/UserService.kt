@@ -52,5 +52,3 @@ interface UserService {
     @GET("users/@me/connections")
     suspend fun getBotUserConnections(): Array<Connection> // Connection
 }
-
-

@@ -20,4 +20,3 @@ data class GuildMemberAddEventContext(
 
     val guild by lazyAsync { discordClient.dataCache.guildCache.getSuspending(guildId) }
 }
-

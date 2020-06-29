@@ -11,7 +11,7 @@ abstract class ChatCommand(
     abstract suspend fun CommandContext.execute(args: String)
     open suspend fun CommandContext.postExecute() {}
 
-    fun matches(match: String) = match == "${prefix}${text}"
+    fun matches(match: String) = match == "${prefix}$text"
 }
 
 data class CommandContext(

@@ -17,14 +17,14 @@ import com.jofairden.discordkt.model.discord.message.DiscordMessage
 import com.jofairden.discordkt.model.discord.message.MessageReaction
 import com.jofairden.discordkt.model.discord.role.GuildRole
 import com.jofairden.discordkt.model.discord.user.DiscordUser
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.TimeUnit
+import kotlin.coroutines.coroutineContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.future.await
 import kotlinx.coroutines.withContext
 import mu.KotlinLogging
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.TimeUnit
-import kotlin.coroutines.coroutineContext
 
 typealias CombinedId = Pair<Long, Long>
 
@@ -252,7 +252,7 @@ class DataCache(
                         add(
                             MessageReaction(
                                 count = 1,
-                                me = false,// TODO
+                                me = false, // TODO
                                 emoji = emoji
                             )
                         )

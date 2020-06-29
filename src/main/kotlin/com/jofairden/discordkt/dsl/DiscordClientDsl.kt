@@ -173,4 +173,3 @@ fun DiscordClient.onTypingStart(block: TypingStartEventBlock) {
 fun DiscordClient.onUserUpdate(block: UserUpdateEventBlock) {
     userUpdateEventBlocks += block
 }
-

@@ -15,5 +15,3 @@ data class MessageDeleteEventContext(
 ) : IEventContext {
     override lateinit var discordClient: DiscordClient
 }
-
-
