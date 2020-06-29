@@ -8,12 +8,55 @@ A Discord library written in Kotlin for Kotlin. The purpose of the library is to
 *   Native: ❌
 
 # How to use
-The library is not yet released.
-To use it you must pull the repository and locally install it.
+The library is still in early alpha stage. Use at your own discretion.
+
+### Repositories
+```groovy
+repositories {
+    /**
+     * Ensure you have at least these repositories
+     */
+    mavenCentral()
+    jcenter()
+    maven {
+        name = "Github PKG"
+        url = uri("https://maven.pkg.github.com/jofairden/discord.kt")
+        credentials {
+            /**
+             * In order to access Github PKG, you need to enter your username and access token with the read:packages grant
+             * To create a personal access token, go to: https://github.com/settings/tokens
+             */
+            username = System.getenv("MAVEN_PKG_GITHUB_ACTOR")
+            password = System.getenv("MAVEN_PKG_GITHUB_TOKEN")
+        }
+    }
+}
+```
+### Dependencies
+### Gradle
+(Bare minumum)
+```groovy
+dependencies {
+    implementation(kotlin("stdlib-jdk8"))
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.3.3")
+    /**
+     * Add Discord.Kt as a dependency
+     */
+    implementation("com.jofairden:discord.kt:LATEST_VERSION")
+}
+```
+### Maven
+```xml
+<dependency>
+    <groupId>com.jpfaordem</groupId>
+    <artifactId>discord.kt</artifactId>
+    <version>LATEST_VERSION</version>
+</dependency>
+```
 
 # Basic example
-For current accurate examples, please see the [example package](https://github.com/Jofairden/Discord.Kt/tree/master/src/main/kotlin/com/jofairden/discordkt/example)
-
+For current accurate examples, please see the [example bot](https://github.com/Jofairden/Discord.Kt-Example-Bot).
 # Feature set
 Current lib features: (list incomplete)
 - [x] Connect with Discord
