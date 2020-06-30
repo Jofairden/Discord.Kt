@@ -6,7 +6,7 @@ class ExampleTest {
 
     @Test
     fun `always succeeds`() {
-        // Testing run !
+        // Testing run
         println("This test should always succeed and provide a baseline.")
         assert(true)
     }
