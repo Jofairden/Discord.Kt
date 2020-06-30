@@ -50,7 +50,6 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           - name: discordkt
-          - path: ${{ github.workspace }}
 
       - name: Run ktlinter
         run: ./gradlew ktlintCheck
@@ -65,7 +64,6 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           - name: discordkt
-          - path: ${{ github.workspace }}
 
       - name: Run tests
         run: ./gradlew clean test
