@@ -35,9 +35,10 @@ jobs:
         run: ls -la
 
       - name: Upload artifact
+        working-directory: ${{ github.workspace }}
         uses: actions/upload-artifact@v2
         with:
-          name: discord-kt
+          name: discordkt
           path: ./
 
   # Run KtLinter
@@ -49,7 +50,8 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v2
         with:
-          - name: discord-kt
+          - name: discordkt
+          - path: ${{ github.workspace }}
 
       - name: Run ktlinter
         run: ./gradlew ktlintCheck
@@ -63,7 +65,8 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v2
         with:
-          - name: discord-kt
+          - name: discordkt
+          - path: ${{ github.workspace }}
 
       - name: Run tests
         run: ./gradlew clean test
