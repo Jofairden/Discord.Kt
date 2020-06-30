@@ -48,8 +48,6 @@ jobs:
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v2
-        with:
-          - name: discordkt
 
       - name: Run ktlinter
         run: ./gradlew ktlintCheck
@@ -62,8 +60,6 @@ jobs:
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v2
-        with:
-          - name: discordkt
 
       - name: Run tests
         run: ./gradlew clean test
