@@ -48,7 +48,8 @@ jobs:
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v2
-      - run: cd /home/runner/work/Discord.Kt/Discord.Kt/discordkt
+      - run: cd /home/runner/work/Discord.Kt/Discord.Kt/discordkt |
+             ls -la
       - name: Run ktlinter
         run: ./gradlew ktlintCheck
 
@@ -60,6 +61,7 @@ jobs:
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v2
-      - run: cd /home/runner/work/Discord.Kt/Discord.Kt/discordkt
+      - run: cd /home/runner/work/Discord.Kt/Discord.Kt/discordkt |
+          ls -la
       - name: Run tests
         run: ./gradlew clean test
