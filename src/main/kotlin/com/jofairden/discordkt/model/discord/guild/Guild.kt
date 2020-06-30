@@ -147,7 +147,20 @@ data class Guild(
     val systemChannelFlags: Int,
 
     @JsonProperty("rules_channel_id")
-    val rulesChannelId: Long?
+    val rulesChannelId: Long?,
+
+    // Video
+    @JsonProperty("max_video_channel_users")
+    val maxVideoChannelUsers: Int?,
+    @JsonProperty("approximate_member_count")
+    val approximateMemberCount: Int?,
+    @JsonProperty("approximate_presence_count")
+    val approximatePresenceCount: Int?,
+
+    // Channel
+    @JsonProperty("public_updates_channel_id")
+    val publicUpdatesChannelId: Long?
+
 ) : ApiAware() {
 
     val owner by lazyAsync {

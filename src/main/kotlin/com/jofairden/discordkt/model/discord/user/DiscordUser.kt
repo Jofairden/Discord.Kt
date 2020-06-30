@@ -34,11 +34,11 @@ class DiscordUser(
     @JsonProperty("email")
     val email: String?,
 
-    @JsonProperty("flags")
-    val flags: UserFlags?,
-
     @JsonProperty("premium_type")
-    val nitroType: NitroType?
+    val nitroType: NitroType?,
+
+    @JsonProperty("public_flags")
+    val flags: Int? // TODO
 ) {
 
     val avatarUrl = "https://cdn.discordapp.com/avatars/$id/$avatarHash.png"

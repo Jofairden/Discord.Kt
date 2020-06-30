@@ -17,4 +17,7 @@ enum class UserFlags(
     EarlySupporter(1 shl 9),
     TeamUser(1 shl 10),
     System(1 shl 12),
+    BugHunterLvl2(1 shl 14),
+    VerifiedBot(1 shl 16),
+    VerifiedBotDeveloper(1 shl 17),
 }
