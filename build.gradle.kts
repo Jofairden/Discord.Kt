@@ -53,6 +53,8 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-jackson:${gradleProperty("retrofit-version")}")
     implementation("org.slf4j:slf4j-simple:${gradleProperty("sl4j-simple-version")}")
     implementation("com.github.ben-manes.caffeine:caffeine:${gradleProperty("caffeine-version")}")
+
+    testImplementation("org.junit.jupiter:junit-jupiter:${gradleProperty("junit-jupiter-version")}")
 }
 
 tasks {
@@ -71,6 +73,13 @@ tasks {
         options.isFork = true
         sourceCompatibility = gradleProperty("jvm-target")
         targetCompatibility = gradleProperty("jvm-target")
+    }
+    test {
+        useJUnitPlatform()
+        testLogging {
+            showStandardStreams = true; // Also show regular printed stuff
+            events("passed", "skipped", "failed")
+        }
     }
 }
 
