@@ -1,4 +1,4 @@
-# Discord.Kt [![Discord](https://img.shields.io/discord/663780943609331733.svg?style=flat-square)](https://discord.gg/RkBVCmy) [![Publish release](https://github.com/Jofairden/Discord.Kt/workflows/Publish%20release/badge.svg)](https://github.com/Jofairden/Discord.Kt/actions?query=workflow%3A%22Publish+release%22+is%3Asuccess)
+# Discord.Kt [![Discord](https://img.shields.io/discord/663780943609331733.svg?style=flat-square)](https://discord.gg/RkBVCmy) [![Publish release](https://github.com/Jofairden/Discord.Kt/workflows/Publish%20release/badge.svg)](https://github.com/Jofairden/Discord.Kt/actions?query=workflow%3A%22Publish+release%22+is%3Asuccess) [![ktlint](https://img.shields.io/badge/code%20style-%E2%9D%A4-FF4081.svg)](https://ktlint.github.io/)
 A Discord library written in Kotlin for Kotlin. The purpose of the library is to be easily able to create a Discord bot in Kotlin with minimal amount of code using Kotlin DSL.
 
 ## Support status
