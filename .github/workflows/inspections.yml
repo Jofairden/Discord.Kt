@@ -46,13 +46,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: setup
     steps:
-      - name: Download artifact
+      - name: Download artifact and run ktlinter
         uses: actions/download-artifact@v2
       - run: |
          cd /home/runner/work/Discord.Kt/Discord.Kt/discordkt
          ls -la
-      - name: Run ktlinter
-        run: ./gradlew ktlintCheck
+         ./gradlew ktlintCheck
 
   # Run JUnit
   junit:
@@ -60,10 +59,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: setup
     steps:
-      - name: Download artifact
+      - name: Download artifact and run tests
         uses: actions/download-artifact@v2
       - run: |
          cd /home/runner/work/Discord.Kt/Discord.Kt/discordkt
          ls -la
-      - name: Run tests
-        run: ./gradlew clean test
+         ./gradlew clean test
