@@ -48,9 +48,11 @@ dependencies {
 ```
 ### Maven
 Locate the final package in the [packages page](https://github.com/Jofairden/Discord.Kt/packages) on Github and follow the instructions.
+**You still need to add the repository as shown in the gadle section.**
 
 # Basic example
 For current accurate examples, please see the [example bot](https://github.com/Jofairden/Discord.Kt-Example-Bot).
+
 # Feature set
 Current lib features: (list incomplete)
 - [x] Connect with Discord
