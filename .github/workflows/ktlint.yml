@@ -1,0 +1,26 @@
+name: Run ktlint inspector
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Set up Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Run ktlinter
+        run: ./gradlew ktlintCheck
