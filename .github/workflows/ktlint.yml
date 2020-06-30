@@ -4,7 +4,15 @@ on:
   push:
     branches:
       - master
+      - 'releases/**'
+      - '!releases/**-beta'
+    paths:
+      - '**.kt'
+      - '**.kts'
   pull_request:
+    paths:
+      - '**.kt'
+      - '**.kts'
 
 jobs:
   publish:
