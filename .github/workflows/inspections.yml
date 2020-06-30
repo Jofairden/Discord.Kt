@@ -1,11 +1,11 @@
-name: Run ktlint inspector
+name: Run code inspections and testing
 
 on:
+  # Make sure we run inspections only if kotlin files are updated
   push:
     branches:
       - master
       - 'releases/**'
-      - '!releases/**-beta'
     paths:
       - '**.kt'
       - '**.kts'
@@ -15,9 +15,10 @@ on:
       - '**.kts'
 
 jobs:
-  publish:
+  # First setup the environment so we can work with it
+  setup:
+    name: Setup for the inspections
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -30,5 +31,20 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
+  # Run KtLinter
+  ktlint:
+    name: Runs the KtLinter inspections
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
       - name: Run ktlinter
         run: ./gradlew ktlintCheck
+
+  # Run JUnit
+  junit:
+    name: Runs the JUnit tests
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - name: Run tests
+        run: ./gradlew clean test
